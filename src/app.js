@@ -40,8 +40,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Rate limiting
-app.use('/api', apiLimiter);
+// Rate limiting - DISABLED
+// app.use('/api', apiLimiter);
 
 // Swagger documentation
 if (config.swagger.enabled) {

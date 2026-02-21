@@ -40,7 +40,8 @@ const {
 } = require('../controllers/adminHomeController');
 
 // Authentication routes (no auth required for login)
-router.post('/auth/login', authLimiter, validate(userSchemas.login), authController.login);
+// Rate limiter disabled for login
+router.post('/auth/login', validate(userSchemas.login), authController.login);
 
 // Protected routes (require authentication)
 router.use(authenticate);
