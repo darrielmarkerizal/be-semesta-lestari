@@ -1,5 +1,6 @@
 // Article Seeder Script for Semesta Lestari
 const db = require("../config/database");
+const { pool } = require('../config/database');
 
 const articles = [
   {
@@ -42,7 +43,7 @@ const articles = [
 
 async function seed() {
   for (const article of articles) {
-    await db.query(
+      await pool.query(
       "INSERT INTO articles (title, subtitle, content, image_url, author_id, category_id, published_at, is_active, view_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         article.title,
