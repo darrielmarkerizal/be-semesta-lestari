@@ -1,5 +1,5 @@
-const FAQ = require('../models/FAQ');
-const { successResponse, errorResponse } = require('../utils/response');
+const FAQ = require("../models/FAQ");
+const { successResponse, errorResponse } = require("../utils/response");
 
 /**
  * @swagger
@@ -15,7 +15,7 @@ const { successResponse, errorResponse } = require('../utils/response');
 const getAllFAQs = async (req, res, next) => {
   try {
     const data = await FAQ.findAll(true);
-    return successResponse(res, data, 'FAQ retrieved');
+    return successResponse(res, data, "FAQ retrieved");
   } catch (error) {
     next(error);
   }
@@ -41,8 +41,8 @@ const getAllFAQs = async (req, res, next) => {
 const getFAQById = async (req, res, next) => {
   try {
     const item = await FAQ.findById(req.params.id);
-    if (!item) return errorResponse(res, 'FAQ not found', 404);
-    return successResponse(res, item, 'FAQ retrieved');
+    if (!item) return errorResponse(res, "FAQ not found", 404);
+    return successResponse(res, item, "FAQ retrieved");
   } catch (error) {
     next(error);
   }
@@ -92,10 +92,23 @@ const getFAQById = async (req, res, next) => {
  */
 const getAllFAQsAdmin = async (req, res, next) => {
   try {
+    // If client requests all items, return full list (no pagination)
+    if (req.query.all === "true") {
+      const data = await FAQ.findAll(null);
+      return successResponse(res, data, "FAQ retrieved");
+    }
+
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const { data, total } = await FAQ.findAllPaginated(page, limit, null);
-    return require('../utils/response').paginatedResponse(res, data, page, limit, total, 'FAQ retrieved');
+    return require("../utils/response").paginatedResponse(
+      res,
+      data,
+      page,
+      limit,
+      total,
+      "FAQ retrieved",
+    );
   } catch (error) {
     next(error);
   }
@@ -104,8 +117,8 @@ const getAllFAQsAdmin = async (req, res, next) => {
 const getFAQByIdAdmin = async (req, res, next) => {
   try {
     const item = await FAQ.findById(req.params.id);
-    if (!item) return errorResponse(res, 'FAQ not found', 404);
-    return successResponse(res, item, 'FAQ retrieved');
+    if (!item) return errorResponse(res, "FAQ not found", 404);
+    return successResponse(res, item, "FAQ retrieved");
   } catch (error) {
     next(error);
   }
@@ -114,7 +127,7 @@ const getFAQByIdAdmin = async (req, res, next) => {
 const createFAQ = async (req, res, next) => {
   try {
     const item = await FAQ.create(req.body);
-    return successResponse(res, item, 'FAQ created successfully', 201);
+    return successResponse(res, item, "FAQ created successfully", 201);
   } catch (error) {
     next(error);
   }
@@ -173,8 +186,8 @@ const createFAQ = async (req, res, next) => {
 const updateFAQ = async (req, res, next) => {
   try {
     const item = await FAQ.update(req.params.id, req.body);
-    if (!item) return errorResponse(res, 'FAQ not found', 404);
-    return successResponse(res, item, 'FAQ updated successfully');
+    if (!item) return errorResponse(res, "FAQ not found", 404);
+    return successResponse(res, item, "FAQ updated successfully");
   } catch (error) {
     next(error);
   }
@@ -183,8 +196,8 @@ const updateFAQ = async (req, res, next) => {
 const deleteFAQ = async (req, res, next) => {
   try {
     const deleted = await FAQ.delete(req.params.id);
-    if (!deleted) return errorResponse(res, 'FAQ not found', 404);
-    return successResponse(res, null, 'FAQ deleted successfully');
+    if (!deleted) return errorResponse(res, "FAQ not found", 404);
+    return successResponse(res, null, "FAQ deleted successfully");
   } catch (error) {
     next(error);
   }
@@ -197,5 +210,5 @@ module.exports = {
   getByIdAdmin: getFAQByIdAdmin,
   create: createFAQ,
   update: updateFAQ,
-  delete: deleteFAQ
+  delete: deleteFAQ,
 };
