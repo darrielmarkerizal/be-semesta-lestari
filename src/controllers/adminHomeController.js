@@ -1,16 +1,17 @@
-const HeroSection = require('../models/HeroSection');
-const Vision = require('../models/Vision');
-const Mission = require('../models/Mission');
-const ImpactSection = require('../models/ImpactSection');
-const DonationCTA = require('../models/DonationCTA');
-const ClosingCTA = require('../models/ClosingCTA');
-const History = require('../models/History');
-const Leadership = require('../models/Leadership');
-const HomeStatistics = require('../models/HomeStatistics');
-const HomePartnersSection = require('../models/HomePartnersSection');
-const HomeProgramsSection = require('../models/HomeProgramsSection');
-const HomeFaqSection = require('../models/HomeFaqSection');
-const createGenericController = require('./genericController');
+const HeroSection = require("../models/HeroSection");
+const Vision = require("../models/Vision");
+const Mission = require("../models/Mission");
+const ImpactSection = require("../models/ImpactSection");
+const DonationCTA = require("../models/DonationCTA");
+const ClosingCTA = require("../models/ClosingCTA");
+const History = require("../models/History");
+const Leadership = require("../models/Leadership");
+const HomeStatistics = require("../models/HomeStatistics");
+const HomePartnersSection = require("../models/HomePartnersSection");
+const HomeProgramsSection = require("../models/HomeProgramsSection");
+const HomeFaqSection = require("../models/HomeFaqSection");
+const FAQ = require("../models/FAQ");
+const createGenericController = require("./genericController");
 
 /**
  * @swagger
@@ -64,7 +65,11 @@ const heroController = {
   get: async (req, res, next) => {
     try {
       const hero = await HeroSection.getFirst();
-      return require('../utils/response').successResponse(res, hero, 'Hero section retrieved');
+      return require("../utils/response").successResponse(
+        res,
+        hero,
+        "Hero section retrieved",
+      );
     } catch (error) {
       next(error);
     }
@@ -73,11 +78,15 @@ const heroController = {
     try {
       const hero = await HeroSection.getFirst();
       const updated = await HeroSection.update(hero?.id || 1, req.body);
-      return require('../utils/response').successResponse(res, updated, 'Hero section updated');
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Hero section updated",
+      );
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 /**
@@ -125,7 +134,11 @@ const visionController = {
   get: async (req, res, next) => {
     try {
       const vision = await Vision.getFirst();
-      return require('../utils/response').successResponse(res, vision, 'Vision retrieved');
+      return require("../utils/response").successResponse(
+        res,
+        vision,
+        "Vision retrieved",
+      );
     } catch (error) {
       next(error);
     }
@@ -134,11 +147,15 @@ const visionController = {
     try {
       const vision = await Vision.getFirst();
       const updated = await Vision.update(vision?.id || 1, req.body);
-      return require('../utils/response').successResponse(res, updated, 'Vision updated');
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Vision updated",
+      );
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 /**
@@ -233,7 +250,7 @@ const visionController = {
  *       200:
  *         description: Mission deleted successfully
  */
-const missionController = createGenericController(Mission, 'Mission');
+const missionController = createGenericController(Mission, "Mission");
 /**
  * @swagger
  * /api/admin/homepage/impact:
@@ -335,7 +352,10 @@ const missionController = createGenericController(Mission, 'Mission');
  *       200:
  *         description: Impact section deleted successfully
  */
-const impactController = createGenericController(ImpactSection, 'Impact Section');
+const impactController = createGenericController(
+  ImpactSection,
+  "Impact Section",
+);
 /**
  * @swagger
  * /api/admin/about/history:
@@ -435,7 +455,7 @@ const impactController = createGenericController(ImpactSection, 'Impact Section'
  *       200:
  *         description: History record deleted successfully
  */
-const historyController = createGenericController(History, 'History');
+const historyController = createGenericController(History, "History");
 /**
  * @swagger
  * /api/admin/about/leadership:
@@ -554,7 +574,7 @@ const historyController = createGenericController(History, 'History');
  *       200:
  *         description: Leadership member deleted successfully
  */
-const leadershipController = createGenericController(Leadership, 'Leadership');
+const leadershipController = createGenericController(Leadership, "Leadership");
 
 /**
  * @swagger
@@ -613,7 +633,11 @@ const donationCtaController = {
   get: async (req, res, next) => {
     try {
       const cta = await DonationCTA.getFirst();
-      return require('../utils/response').successResponse(res, cta, 'Donation CTA retrieved');
+      return require("../utils/response").successResponse(
+        res,
+        cta,
+        "Donation CTA retrieved",
+      );
     } catch (error) {
       next(error);
     }
@@ -621,12 +645,19 @@ const donationCtaController = {
   update: async (req, res, next) => {
     try {
       const cta = await DonationCTA.getFirst();
-      const updated = await DonationCTA.update(cta?.id || req.params.id, req.body);
-      return require('../utils/response').successResponse(res, updated, 'Donation CTA updated');
+      const updated = await DonationCTA.update(
+        cta?.id || req.params.id,
+        req.body,
+      );
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Donation CTA updated",
+      );
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 /**
@@ -679,7 +710,11 @@ const closingCtaController = {
   get: async (req, res, next) => {
     try {
       const cta = await ClosingCTA.getFirst();
-      return require('../utils/response').successResponse(res, cta, 'Closing CTA retrieved');
+      return require("../utils/response").successResponse(
+        res,
+        cta,
+        "Closing CTA retrieved",
+      );
     } catch (error) {
       next(error);
     }
@@ -687,12 +722,19 @@ const closingCtaController = {
   update: async (req, res, next) => {
     try {
       const cta = await ClosingCTA.getFirst();
-      const updated = await ClosingCTA.update(cta?.id || req.params.id, req.body);
-      return require('../utils/response').successResponse(res, updated, 'Closing CTA updated');
+      const updated = await ClosingCTA.update(
+        cta?.id || req.params.id,
+        req.body,
+      );
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Closing CTA updated",
+      );
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 /**
@@ -743,7 +785,11 @@ const statisticsController = {
   get: async (req, res, next) => {
     try {
       const stats = await HomeStatistics.getFirst();
-      return require('../utils/response').successResponse(res, stats, 'Statistics retrieved');
+      return require("../utils/response").successResponse(
+        res,
+        stats,
+        "Statistics retrieved",
+      );
     } catch (error) {
       next(error);
     }
@@ -752,11 +798,15 @@ const statisticsController = {
     try {
       const stats = await HomeStatistics.getFirst();
       const updated = await HomeStatistics.update(stats?.id || 1, req.body);
-      return require('../utils/response').successResponse(res, updated, 'Statistics updated');
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Statistics updated",
+      );
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 /**
@@ -798,7 +848,11 @@ const programsSectionController = {
   get: async (req, res, next) => {
     try {
       const section = await HomeProgramsSection.getFirst();
-      return require('../utils/response').successResponse(res, section, 'Programs section retrieved');
+      return require("../utils/response").successResponse(
+        res,
+        section,
+        "Programs section retrieved",
+      );
     } catch (error) {
       next(error);
     }
@@ -806,12 +860,19 @@ const programsSectionController = {
   update: async (req, res, next) => {
     try {
       const section = await HomeProgramsSection.getFirst();
-      const updated = await HomeProgramsSection.update(section?.id || 1, req.body);
-      return require('../utils/response').successResponse(res, updated, 'Programs section updated');
+      const updated = await HomeProgramsSection.update(
+        section?.id || 1,
+        req.body,
+      );
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Programs section updated",
+      );
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 /**
@@ -853,7 +914,11 @@ const partnersSectionController = {
   get: async (req, res, next) => {
     try {
       const section = await HomePartnersSection.getFirst();
-      return require('../utils/response').successResponse(res, section, 'Partners section retrieved');
+      return require("../utils/response").successResponse(
+        res,
+        section,
+        "Partners section retrieved",
+      );
     } catch (error) {
       next(error);
     }
@@ -861,12 +926,19 @@ const partnersSectionController = {
   update: async (req, res, next) => {
     try {
       const section = await HomePartnersSection.getFirst();
-      const updated = await HomePartnersSection.update(section?.id || 1, req.body);
-      return require('../utils/response').successResponse(res, updated, 'Partners section updated');
+      const updated = await HomePartnersSection.update(
+        section?.id || 1,
+        req.body,
+      );
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Partners section updated",
+      );
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 /**
@@ -908,7 +980,13 @@ const faqSectionController = {
   get: async (req, res, next) => {
     try {
       const section = await HomeFaqSection.getFirst();
-      return require('../utils/response').successResponse(res, section, 'FAQ section retrieved');
+      // Include all FAQs (admin view) by default
+      const faqs = await FAQ.findAll(null);
+      return require("../utils/response").successResponse(
+        res,
+        { section, items: faqs },
+        "FAQ section retrieved",
+      );
     } catch (error) {
       next(error);
     }
@@ -917,11 +995,15 @@ const faqSectionController = {
     try {
       const section = await HomeFaqSection.getFirst();
       const updated = await HomeFaqSection.update(section?.id || 1, req.body);
-      return require('../utils/response').successResponse(res, updated, 'FAQ section updated');
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "FAQ section updated",
+      );
     } catch (error) {
       next(error);
     }
-  }
+  },
 };
 
 /**
@@ -969,11 +1051,11 @@ const faqSectionController = {
  */
 // Contact section now uses the same data as /api/contact
 // Redirect to contact controller methods
-const contactController = require('./contactController');
+const contactController = require("./contactController");
 
 const contactSectionController = {
   get: contactController.getContactInfoAdmin,
-  update: contactController.updateContactInfo
+  update: contactController.updateContactInfo,
 };
 
 module.exports = {
@@ -989,5 +1071,5 @@ module.exports = {
   programsSectionController,
   partnersSectionController,
   faqSectionController,
-  contactSectionController
+  contactSectionController,
 };
