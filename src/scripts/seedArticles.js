@@ -52,7 +52,7 @@ async function seed() {
   for (const article of articles) {
     const slug = generateSlug(article.title);
     await pool.query(
-      "INSERT INTO articles (title, slug, subtitle, content, image_url, author_id, category_id, published_at, is_active, view_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO articles (title, slug, subtitle, content, image_url, author_id, category_id, published_at, is_active, view_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         article.title,
         slug,
@@ -62,7 +62,7 @@ async function seed() {
         article.author_id,
         article.category_id,
         article.published_at,
-        article.is_active,
+        article.is_active ? 1 : 0,
         article.view_count,
       ],
     );
