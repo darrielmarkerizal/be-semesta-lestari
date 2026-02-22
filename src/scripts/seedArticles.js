@@ -1,6 +1,6 @@
 // Article Seeder Script for Semesta Lestari
 const db = require("../config/database");
-const { pool } = require('../config/database');
+const { pool } = require("../config/database");
 
 const articles = [
   {
@@ -41,12 +41,21 @@ const articles = [
   },
 ];
 
+function generateSlug(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 async function seed() {
   for (const article of articles) {
-      await pool.query(
-      "INSERT INTO articles (title, subtitle, content, image_url, author_id, category_id, published_at, is_active, view_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    const slug = generateSlug(article.title);
+    await pool.query(
+      "INSERT INTO articles (title, slug, subtitle, content, image_url, author_id, category_id, published_at, is_active, view_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         article.title,
+        slug,
         article.subtitle,
         article.content,
         article.image_url,
