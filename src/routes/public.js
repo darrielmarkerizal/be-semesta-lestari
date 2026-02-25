@@ -17,6 +17,7 @@ const programController = require('../controllers/programController');
 const partnerController = require('../controllers/partnerController');
 const faqController = require('../controllers/faqController');
 const categoryController = require('../controllers/categoryController');
+const footerController = require('../controllers/footerController');
 const Settings = require('../models/Settings');
 const { successResponse } = require('../utils/response');
 
@@ -112,5 +113,8 @@ router.get('/config', async (req, res, next) => {
     next(error);
   }
 });
+
+// Footer endpoint
+router.get('/footer', footerController.getFooterData);
 
 module.exports = router;

@@ -265,17 +265,32 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`,
       
+      // Program categories table
+      `CREATE TABLE IF NOT EXISTS program_categories (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        name VARCHAR(100) NOT NULL UNIQUE,
+        slug VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        icon VARCHAR(100),
+        order_position INT DEFAULT 0,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+      
       // Programs table
       `CREATE TABLE IF NOT EXISTS programs (
         id INT PRIMARY KEY AUTO_INCREMENT,
         name VARCHAR(255) NOT NULL,
         description TEXT,
         image_url VARCHAR(500),
+        category_id INT,
         is_highlighted BOOLEAN DEFAULT FALSE,
         order_position INT DEFAULT 0,
         is_active BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (category_id) REFERENCES program_categories(id) ON DELETE SET NULL
       )`,
       
       // Partners table

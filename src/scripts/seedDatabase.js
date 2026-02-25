@@ -88,17 +88,34 @@ const seedData = async () => {
     );
     logger.info('✅ Programs section seeded');
     
-    // Seed programs
-    const programs = [
-      ['Tree Planting Initiative', 'Planting trees across communities to combat climate change', null, true, 1],
-      ['Waste Management Program', 'Implementing sustainable waste management solutions', null, false, 2],
-      ['Environmental Education', 'Educating communities about environmental conservation', null, false, 3]
+    // Seed program categories
+    const programCategories = [
+      ['Conservation', 'conservation', 'Programs focused on environmental conservation and protection', '🌳', 1],
+      ['Education', 'education', 'Educational programs and awareness campaigns', '📚', 2],
+      ['Community', 'community', 'Community-based environmental initiatives', '👥', 3],
+      ['Research', 'research', 'Environmental research and monitoring programs', '🔬', 4]
     ];
     
-    for (const [name, description, image_url, is_highlighted, order_position] of programs) {
+    for (const [name, slug, description, icon, order_position] of programCategories) {
       await pool.query(
-        `INSERT INTO programs (name, description, image_url, is_highlighted, order_position) VALUES (?, ?, ?, ?, ?)`,
-        [name, description, image_url, is_highlighted, order_position]
+        `INSERT INTO program_categories (name, slug, description, icon, order_position) VALUES (?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE description=VALUES(description), icon=VALUES(icon), order_position=VALUES(order_position)`,
+        [name, slug, description, icon, order_position]
+      );
+    }
+    logger.info('✅ Program categories seeded');
+    
+    // Seed programs
+    const programs = [
+      ['Tree Planting Initiative', 'Planting trees across communities to combat climate change', null, 1, true, 1],
+      ['Waste Management Program', 'Implementing sustainable waste management solutions', null, 3, false, 2],
+      ['Environmental Education', 'Educating communities about environmental conservation', null, 2, false, 3]
+    ];
+    
+    for (const [name, description, image_url, category_id, is_highlighted, order_position] of programs) {
+      await pool.query(
+        `INSERT INTO programs (name, description, image_url, category_id, is_highlighted, order_position) VALUES (?, ?, ?, ?, ?, ?)`,
+        [name, description, image_url, category_id, is_highlighted, order_position]
       );
     }
     logger.info('✅ Programs seeded');
@@ -699,7 +716,13 @@ This is just the beginning. Together, we can create lasting environmental change
       ['contact_email', 'info@semestalestari.org'],
       ['contact_phones', '["(+62) 21-1234-5678", "(+62) 812-3456-7890"]'],
       ['contact_address', 'Jl. Lingkungan Hijau No. 123, Jakarta Selatan, DKI Jakarta 12345, Indonesia'],
-      ['contact_work_hours', 'Monday - Friday: 09:00 AM - 05:00 PM\\nSaturday: 09:00 AM - 01:00 PM\\nSunday: Closed']
+      ['contact_work_hours', 'Monday - Friday: 09:00 AM - 05:00 PM\\nSaturday: 09:00 AM - 01:00 PM\\nSunday: Closed'],
+      ['social_facebook', 'https://facebook.com/semestalestari'],
+      ['social_instagram', 'https://instagram.com/semestalestari'],
+      ['social_twitter', 'https://twitter.com/semestalestari'],
+      ['social_youtube', 'https://youtube.com/@semestalestari'],
+      ['social_linkedin', 'https://linkedin.com/company/semestalestari'],
+      ['social_tiktok', 'https://tiktok.com/@semestalestari']
     ];
     
     for (const [key, value] of settings) {

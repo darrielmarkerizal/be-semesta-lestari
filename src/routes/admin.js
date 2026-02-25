@@ -21,6 +21,7 @@ const programController = require('../controllers/programController');
 const partnerController = require('../controllers/partnerController');
 const faqController = require('../controllers/faqController');
 const categoryController = require('../controllers/categoryController');
+const programCategoryController = require('../controllers/programCategoryController');
 const adminStatisticsController = require('../controllers/statisticsController');
 const uploadController = require('../controllers/uploadController');
 const {
@@ -112,7 +113,7 @@ router.put('/about/leadership/:id', leadershipController.update);
 router.delete('/about/leadership/:id', leadershipController.delete);
 
 // Page Settings
-const pageRoutes = ['articles', 'awards', 'merchandise', 'gallery', 'leadership', 'contact', 'history', 'vision-mission'];
+const pageRoutes = ['articles', 'awards', 'merchandise', 'gallery', 'leadership', 'contact', 'history', 'vision-mission', 'about', 'programs'];
 pageRoutes.forEach(page => {
   router.get(`/pages/${page}`, (req, res, next) => {
     req.params.slug = page;
@@ -186,6 +187,13 @@ router.post('/categories', validate(categorySchemas.create), categoryController.
 router.get('/categories/:id', categoryController.getByIdAdmin);
 router.put('/categories/:id', validate(categorySchemas.update), categoryController.update);
 router.delete('/categories/:id', categoryController.delete);
+
+// Program Category Management
+router.get('/program-categories', programCategoryController.getAllAdmin);
+router.post('/program-categories', programCategoryController.create);
+router.get('/program-categories/:id', programCategoryController.getByIdAdmin);
+router.put('/program-categories/:id', programCategoryController.update);
+router.delete('/program-categories/:id', programCategoryController.delete);
 
 // Contact Messages Management
 router.get('/contact/show-messages', contactController.getAllMessages);

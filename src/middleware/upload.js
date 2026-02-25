@@ -21,7 +21,10 @@ const entityDirs = [
   'pages',
   'hero',
   'donation',
-  'closing'
+  'closing',
+  'impact_section',
+  'vision',
+  'donation_cta'
 ];
 
 entityDirs.forEach(dir => {

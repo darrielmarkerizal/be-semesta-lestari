@@ -97,6 +97,49 @@ const options = {
             created_at: { type: 'string', format: 'date-time' },
             updated_at: { type: 'string', format: 'date-time' }
           }
+        },
+        ProgramCategory: {
+          type: 'object',
+          properties: {
+            id: { type: 'integer' },
+            name: { type: 'string' },
+            slug: { type: 'string' },
+            description: { type: 'string', nullable: true },
+            icon: { type: 'string', nullable: true, description: 'Emoji or icon identifier' },
+            order_position: { type: 'integer' },
+            is_active: { type: 'boolean' },
+            created_at: { type: 'string', format: 'date-time' },
+            updated_at: { type: 'string', format: 'date-time' }
+          }
+        },
+        FooterData: {
+          type: 'object',
+          properties: {
+            contact: {
+              type: 'object',
+              properties: {
+                email: { type: 'string', format: 'email' },
+                phones: { type: 'array', items: { type: 'string' } },
+                address: { type: 'string' },
+                work_hours: { type: 'string' }
+              }
+            },
+            social_media: {
+              type: 'object',
+              properties: {
+                facebook: { type: 'string', format: 'uri' },
+                instagram: { type: 'string', format: 'uri' },
+                twitter: { type: 'string', format: 'uri' },
+                youtube: { type: 'string', format: 'uri' },
+                linkedin: { type: 'string', format: 'uri' },
+                tiktok: { type: 'string', format: 'uri' }
+              }
+            },
+            program_categories: {
+              type: 'array',
+              items: { $ref: '#/components/schemas/ProgramCategory' }
+            }
+          }
         }
       }
     },
@@ -131,7 +174,11 @@ const options = {
       { name: 'Admin - FAQs', description: 'Admin FAQ management' },
       { name: 'Admin - Contact', description: 'Admin contact info and message management' },
       { name: 'Admin - Users', description: 'Admin user management' },
-      { name: 'Admin - Settings', description: 'Admin settings management' }
+      { name: 'Admin - Settings', description: 'Admin settings management' },
+      { name: 'Admin - Program Categories', description: 'Admin program category management' },
+      { name: 'Admin - Statistics', description: 'Admin statistics and analytics' },
+      { name: 'Admin - Image Upload', description: 'Admin image upload management' },
+      { name: 'Footer', description: 'Footer data endpoint' }
     ]
   },
   apis: ['./src/routes/*.js', './src/controllers/*.js']

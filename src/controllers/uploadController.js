@@ -18,7 +18,7 @@ const { pool } = require('../config/database');
  *         required: true
  *         schema:
  *           type: string
- *           enum: [articles, awards, gallery, merchandise, programs, partners, leadership, history, pages, hero, donation, closing]
+ *           enum: [articles, awards, gallery, merchandise, programs, partners, leadership, history, pages, hero, donation, closing, impact_section, vision, donation_cta]
  *         description: Entity type for organizing uploads
  *     requestBody:
  *       required: true
@@ -103,7 +103,7 @@ const uploadImage = async (req, res, next) => {
  *         required: true
  *         schema:
  *           type: string
- *           enum: [articles, awards, gallery, merchandise, programs, partners, leadership, history, pages, hero, donation, closing]
+ *           enum: [articles, awards, gallery, merchandise, programs, partners, leadership, history, pages, hero, donation, closing, impact_section, vision, donation_cta]
  *         description: Entity type for organizing uploads
  *     requestBody:
  *       required: true
@@ -230,7 +230,7 @@ const deleteImage = async (req, res, next) => {
  *         required: true
  *         schema:
  *           type: string
- *           enum: [articles, awards, gallery, merchandise, programs, partners, leadership, history, pages, hero, donation, closing]
+ *           enum: [articles, awards, gallery, merchandise, programs, partners, leadership, history, pages, hero, donation, closing, impact_section, vision, donation_cta]
  *         description: Entity type for organizing uploads
  *     requestBody:
  *       required: true
