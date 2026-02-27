@@ -35,6 +35,7 @@ const {
   historyController,
   historySectionController,
   leadershipController,
+  leadershipSectionController,
   statisticsController,
   programsSectionController,
   partnersSectionController,
@@ -118,9 +119,13 @@ router.put('/about/missions/:id', missionController.update);
 router.delete('/about/missions/:id', missionController.delete);
 
 router.get('/about/leadership', leadershipController.getAllAdmin);
+router.get('/about/leadership/:id', leadershipController.getByIdAdmin);
 router.post('/about/leadership', leadershipController.create);
 router.put('/about/leadership/:id', leadershipController.update);
 router.delete('/about/leadership/:id', leadershipController.delete);
+
+router.get('/about/leadership-section', leadershipSectionController.get);
+router.put('/about/leadership-section', leadershipSectionController.update);
 
 // Page Settings
 const pageRoutes = ['articles', 'awards', 'merchandise', 'gallery', 'leadership', 'contact', 'history', 'vision-mission', 'about', 'programs'];

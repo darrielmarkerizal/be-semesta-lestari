@@ -651,6 +651,103 @@ const historySectionController = {
 
 /**
  * @swagger
+ * /api/admin/about/leadership-section:
+ *   get:
+ *     summary: Get leadership section settings
+ *     tags:
+ *       - Admin - About
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Leadership section settings retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     title:
+ *                       type: string
+ *                       example: Our Leadership
+ *                     subtitle:
+ *                       type: string
+ *                       example: Meet the team driving environmental change
+ *                     image_url:
+ *                       type: string
+ *                       nullable: true
+ *                       example: /uploads/leadership/hero.jpg
+ *                     is_active:
+ *                       type: boolean
+ *   put:
+ *     summary: Update leadership section settings
+ *     tags:
+ *       - Admin - About
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Our Leadership
+ *               subtitle:
+ *                 type: string
+ *                 example: Meet the team driving environmental change
+ *               image_url:
+ *                 type: string
+ *                 example: /uploads/leadership/hero.jpg
+ *               is_active:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Leadership section settings updated successfully
+ */
+const leadershipSectionController = {
+  get: async (req, res, next) => {
+    try {
+      const section = await require('../models/LeadershipSection').getFirst();
+      return require("../utils/response").successResponse(
+        res,
+        section,
+        "Leadership section settings retrieved",
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
+  update: async (req, res, next) => {
+    try {
+      const section = await require('../models/LeadershipSection').getFirst();
+      const updated = await require('../models/LeadershipSection').update(
+        section?.id || 1,
+        req.body,
+      );
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Leadership section settings updated",
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
+};
+
+/**
+ * @swagger
  * /api/admin/about/leadership:
  *   get:
  *     summary: Get all leadership members
@@ -1272,6 +1369,7 @@ module.exports = {
   historyController,
   historySectionController,
   leadershipController,
+  leadershipSectionController,
   statisticsController,
   programsSectionController,
   partnersSectionController,

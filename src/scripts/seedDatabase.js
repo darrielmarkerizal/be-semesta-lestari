@@ -246,6 +246,14 @@ const seedData = async () => {
     }
     logger.info('✅ History seeded');
     
+    // Seed leadership section
+    await pool.query(
+      `INSERT INTO leadership_section (title, subtitle, image_url, is_active) 
+       VALUES (?, ?, ?, ?)`,
+      ['Our Leadership', 'Meet the team driving environmental change', null, true]
+    );
+    logger.info('✅ Leadership section seeded');
+    
     // Seed leadership
     const leadershipMembers = [
       ['Dr. Budi Santoso', 'Founder & CEO', 'Environmental scientist with 20+ years of experience in conservation and sustainability. Passionate about creating lasting environmental impact.', null, 'budi.santoso@semestalestari.com', '+62 812 3456 7890', 'https://linkedin.com/in/budisantoso', 'https://instagram.com/budisantoso', true, 1],
