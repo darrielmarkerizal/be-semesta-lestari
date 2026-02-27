@@ -185,9 +185,9 @@ const seedData = async () => {
     
     // Seed FAQ section
     await pool.query(
-      `INSERT INTO home_faq_section (title, subtitle, is_active) 
-       VALUES (?, ?, ?)`,
-      ['Frequently Asked Questions', 'Find answers to common questions', true]
+      `INSERT INTO home_faq_section (title, subtitle, image_url, is_active) 
+       VALUES (?, ?, ?, ?)`,
+      ['Frequently Asked Questions', 'Find answers to common questions', null, true]
     );
     logger.info('✅ FAQ section seeded');
     

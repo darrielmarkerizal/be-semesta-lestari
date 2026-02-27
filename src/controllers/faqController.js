@@ -1,21 +1,80 @@
 const FAQ = require("../models/FAQ");
+const HomeFaqSection = require("../models/HomeFaqSection");
 const { successResponse, errorResponse } = require("../utils/response");
 
 /**
  * @swagger
  * /api/faqs:
  *   get:
- *     summary: Get all FAQs
+ *     summary: Get FAQs section with header and items
+ *     description: Returns FAQ section settings (title, subtitle, image) and all FAQ items
  *     tags:
  *       - FAQs
  *     responses:
  *       200:
- *         description: FAQs retrieved successfully
+ *         description: FAQs section retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: FAQs section retrieved
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     section:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         title:
+ *                           type: string
+ *                           example: Frequently Asked Questions
+ *                         subtitle:
+ *                           type: string
+ *                           example: Find answers to common questions
+ *                         image_url:
+ *                           type: string
+ *                           nullable: true
+ *                           example: /uploads/faqs/hero.jpg
+ *                         is_active:
+ *                           type: boolean
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           question:
+ *                             type: string
+ *                           answer:
+ *                             type: string
+ *                           category:
+ *                             type: string
+ *                           order_position:
+ *                             type: integer
+ *                           is_active:
+ *                             type: boolean
  */
 const getAllFAQs = async (req, res, next) => {
   try {
-    const data = await FAQ.findAll(true);
-    return successResponse(res, data, "FAQ retrieved");
+    const [faqSettings, faqItems] = await Promise.all([
+      HomeFaqSection.findAll(true, 'created_at DESC'),
+      FAQ.findAll(true)
+    ]);
+    
+    const response = {
+      section: faqSettings[0] || null,
+      items: faqItems
+    };
+    
+    return successResponse(res, response, "FAQs section retrieved");
   } catch (error) {
     next(error);
   }

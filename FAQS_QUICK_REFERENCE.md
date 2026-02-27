@@ -1,139 +1,245 @@
-# FAQs API - Quick Reference
+# FAQs Section - Quick Reference
 
-## Status: ✅ Complete & Synchronized
+## Overview
+FAQs section with header settings (title, subtitle, image) and FAQ items list.
 
----
+## API Endpoints
 
-## Quick Facts
+### Public Endpoints
 
-- **Synchronized:** Yes - `/api/faqs` and `/api/home` use same `faqs` table
-- **CRUD Operations:** All implemented at `/api/admin/faqs`
-- **Tests:** 13/13 passed (100%)
-- **Authentication:** Required for admin endpoints only
+#### GET /api/faqs
+Returns FAQs section with header and items.
 
----
-
-## Public Endpoints
-
-```bash
-# Get all FAQs
-GET /api/faqs
-
-# Get single FAQ
-GET /api/faqs/:id
-
-# FAQs in home page
-GET /api/home
-# Returns: data.faq.items (array of FAQs)
+**Response:**
+```json
+{
+  "success": true,
+  "message": "FAQs section retrieved",
+  "data": {
+    "section": {
+      "id": 1,
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions",
+      "image_url": "/uploads/faqs/hero.jpg",
+      "is_active": true
+    },
+    "items": [
+      {
+        "id": 1,
+        "question": "What is your mission?",
+        "answer": "Our mission is to protect the environment...",
+        "category": "General",
+        "order_position": 1,
+        "is_active": true
+      }
+    ]
+  }
+}
 ```
 
----
+### Admin Endpoints
 
-## Admin Endpoints
+#### GET /api/admin/homepage/faq-section
+Get FAQ section settings.
 
-All require `Authorization: Bearer {token}`
+**Headers:** `Authorization: Bearer {token}`
 
-```bash
-# List FAQs (paginated)
-GET /api/admin/faqs?page=1&limit=10
-
-# Get single FAQ
-GET /api/admin/faqs/:id
-
-# Create FAQ
-POST /api/admin/faqs
+**Response:**
+```json
 {
-  "question": "Your question here?",
-  "answer": "Your detailed answer here.",
+  "success": true,
+  "data": {
+    "section": {
+      "id": 1,
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions",
+      "image_url": "/uploads/faqs/hero.jpg",
+      "is_active": true
+    },
+    "items": [...]
+  }
+}
+```
+
+#### PUT /api/admin/homepage/faq-section
+Update FAQ section settings.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Body:**
+```json
+{
+  "title": "FAQs",
+  "subtitle": "Common questions answered",
+  "image_url": "/uploads/faqs/new-hero.jpg"
+}
+```
+
+#### GET /api/admin/faqs
+List all FAQ items.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Query Params:**
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 10)
+- `all=true` (optional): Get all items without pagination
+
+#### GET /api/admin/faqs/:id
+Get single FAQ item.
+
+**Headers:** `Authorization: Bearer {token}`
+
+#### POST /api/admin/faqs
+Create new FAQ item.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Body:**
+```json
+{
+  "question": "What is your mission?",
+  "answer": "Our mission is to...",
   "category": "General",
-  "order_position": 0,
+  "order_position": 1,
   "is_active": true
 }
+```
 
-# Update FAQ
-PUT /api/admin/faqs/:id
+#### PUT /api/admin/faqs/:id
+Update FAQ item.
+
+**Headers:** `Authorization: Bearer {token}`
+
+**Body:**
+```json
 {
   "question": "Updated question?",
-  "answer": "Updated answer."
+  "answer": "Updated answer",
+  "category": "Updated Category"
 }
-
-# Delete FAQ
-DELETE /api/admin/faqs/:id
 ```
 
----
+#### DELETE /api/admin/faqs/:id
+Delete FAQ item.
 
-## Required Fields
+**Headers:** `Authorization: Bearer {token}`
 
-- ✅ `question` (string, max 500 chars)
-- ✅ `answer` (text, long)
+## Database Tables
 
-## Optional Fields
+### home_faq_section
+Section header settings.
 
-- `category` (string, max 100 chars)
-- `order_position` (integer, default: 0)
-- `is_active` (boolean, default: true)
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT | Primary key |
+| title | VARCHAR(255) | Section title |
+| subtitle | VARCHAR(255) | Section subtitle |
+| image_url | VARCHAR(500) | Hero image URL |
+| is_active | BOOLEAN | Active status |
+| created_at | TIMESTAMP | Creation time |
+| updated_at | TIMESTAMP | Last update time |
 
----
+### faqs
+FAQ items.
 
-## Test Script
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT | Primary key |
+| question | VARCHAR(500) | FAQ question |
+| answer | TEXT | FAQ answer |
+| category | VARCHAR(100) | FAQ category |
+| order_position | INT | Display order |
+| is_active | BOOLEAN | Active status |
+| created_at | TIMESTAMP | Creation time |
+| updated_at | TIMESTAMP | Last update time |
 
+## Testing
+
+Run complete test suite:
 ```bash
-# Run all tests
-./test_faqs_api.sh
+./test_faqs_complete.sh
 ```
 
----
+**Test Coverage:**
+- 67 total tests
+- 100% success rate
+- Public endpoints (12 tests)
+- Admin section settings (10 tests)
+- Admin FAQ items CRUD (14 tests)
+- Data structure validation (17 tests)
+- Authorization (6 tests)
+- Edge cases (8 tests)
 
-## Common Categories
+## Common Tasks
 
-- General
-- Volunteer
-- Donation
-- Programs
-- Environment
-- Membership
-
----
-
-## Data Flow
-
-```
-Admin creates/updates FAQ
-        ↓
-    faqs table
-        ↓
-    ┌───────┴───────┐
-    ↓               ↓
-/api/faqs      /api/home
-(public)       (faq.items)
-```
-
----
-
-## Authentication
-
+### Update Section Header
 ```bash
-# Login to get token
-curl -X POST "http://localhost:3000/api/admin/auth/login" \
+curl -X PUT http://localhost:3000/api/admin/homepage/faq-section \
+  -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"email":"admin@semestalestari.com","password":"admin123"}'
-
-# Use token in requests
-curl -H "Authorization: Bearer {token}" \
-  "http://localhost:3000/api/admin/faqs"
+  -d '{
+    "title": "FAQs",
+    "subtitle": "Common questions",
+    "image_url": "/uploads/faqs/hero.jpg"
+  }'
 ```
 
----
+### Add New FAQ
+```bash
+curl -X POST http://localhost:3000/api/admin/faqs \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "What is your mission?",
+    "answer": "Our mission is...",
+    "category": "General",
+    "order_position": 1,
+    "is_active": true
+  }'
+```
+
+### Get FAQs (Public)
+```bash
+curl http://localhost:3000/api/faqs
+```
 
 ## Files
 
-- **Controller:** `src/controllers/faqController.js`
-- **Model:** `src/models/FAQ.js`
-- **Routes:** `src/routes/public.js`, `src/routes/admin.js`
-- **Tests:** `test_faqs_api.sh`
-- **Summary:** `FAQS_COMPLETE_SUMMARY.md`
+- `src/models/FAQ.js` - FAQ items model
+- `src/models/HomeFaqSection.js` - Section settings model
+- `src/controllers/faqController.js` - FAQ controllers
+- `src/controllers/adminHomeController.js` - Admin section controller
+- `src/scripts/addFaqImageUrl.js` - Migration script
+- `src/scripts/cleanupFaqSectionDuplicates.js` - Cleanup script
+- `test_faqs_complete.sh` - Test script
+- `FAQS_TEST_REPORT.md` - Detailed test report
 
----
+## Model Synchronization
 
-**Last Updated:** February 19, 2026
+The FAQ section follows the same pattern as Impact and Partners:
+
+### Pattern Structure
+- **Section Settings Table**: `home_faq_section` (singular)
+  - Stores: title, subtitle, image_url, is_active
+  - Model: `HomeFaqSection`
+  
+- **Items Table**: `faqs` (plural)
+  - Stores: question, answer, category, order_position, is_active
+  - Model: `FAQ`
+
+### Key Characteristics
+- No foreign key relationship between tables
+- Conceptually related but independently managed
+- Public endpoint returns both in one call
+- Admin endpoints manage separately
+- Consistent with Impact and Partners implementation
+
+## Notes
+
+- Section and items are separate tables (no foreign key relationship)
+- Public endpoint returns both section and items in one call
+- Admin endpoints manage section and items separately
+- Pattern matches impact and partners section implementation
+- All tests passing at 100%
+- Models synchronized across all sections (Impact, Partners, FAQs)

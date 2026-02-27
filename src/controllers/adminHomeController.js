@@ -1097,8 +1097,13 @@ const partnersSectionController = {
  *             properties:
  *               title:
  *                 type: string
+ *                 example: Frequently Asked Questions
  *               subtitle:
  *                 type: string
+ *                 example: Find answers to common questions
+ *               image_url:
+ *                 type: string
+ *                 example: /uploads/faqs/hero.jpg
  *               is_active:
  *                 type: boolean
  *     responses:
