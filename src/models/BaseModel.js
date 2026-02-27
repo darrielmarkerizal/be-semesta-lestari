@@ -106,10 +106,17 @@ class BaseModel {
   }
   
   async getFirst(isActive = true) {
-    const [rows] = await pool.query(
-      `SELECT * FROM ${this.tableName} WHERE is_active = ? LIMIT 1`,
-      [isActive]
-    );
+    let query = `SELECT * FROM ${this.tableName}`;
+    const params = [];
+    
+    if (isActive !== null) {
+      query += ' WHERE is_active = ?';
+      params.push(isActive);
+    }
+    
+    query += ' LIMIT 1';
+    
+    const [rows] = await pool.query(query, params);
     return rows[0];
   }
 }

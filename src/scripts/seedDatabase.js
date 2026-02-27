@@ -91,7 +91,8 @@ const seedData = async () => {
     // Seed programs section
     await pool.query(
       `INSERT INTO home_programs_section (title, subtitle, is_active) 
-       VALUES (?, ?, ?)`,
+       VALUES (?, ?, ?)
+       ON DUPLICATE KEY UPDATE title=VALUES(title), subtitle=VALUES(subtitle)`,
       ['Our Programs', 'Making a difference through various initiatives', true]
     );
     logger.info('✅ Programs section seeded');

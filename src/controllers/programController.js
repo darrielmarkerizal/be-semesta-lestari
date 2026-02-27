@@ -1,21 +1,51 @@
 const Program = require('../models/Program');
+const HomeProgramsSection = require('../models/HomeProgramsSection');
 const { successResponse, errorResponse } = require('../utils/response');
 
 /**
  * @swagger
  * /api/programs:
  *   get:
- *     summary: Get all programs
+ *     summary: Get programs section with all programs
  *     tags:
  *       - Programs
  *     responses:
  *       200:
  *         description: Programs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     section:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         title:
+ *                           type: string
+ *                         subtitle:
+ *                           type: string
+ *                         is_active:
+ *                           type: boolean
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
  */
 const getAllPrograms = async (req, res, next) => {
   try {
-    const data = await Program.findAll(true);
-    return successResponse(res, data, 'Program retrieved');
+    const section = await HomeProgramsSection.getFirst(null);
+    const items = await Program.findAll(true);
+    
+    return successResponse(res, { section, items }, 'Programs retrieved');
   } catch (error) {
     next(error);
   }

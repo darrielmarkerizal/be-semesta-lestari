@@ -1127,6 +1127,26 @@ const statisticsController = {
  *     responses:
  *       200:
  *         description: Programs section retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     title:
+ *                       type: string
+ *                     subtitle:
+ *                       type: string
+ *                     is_active:
+ *                       type: boolean
  *   put:
  *     summary: Update programs section header
  *     tags:
@@ -1142,10 +1162,13 @@ const statisticsController = {
  *             properties:
  *               title:
  *                 type: string
+ *                 example: Our Programs
  *               subtitle:
  *                 type: string
+ *                 example: Making a difference through various initiatives
  *               is_active:
  *                 type: boolean
+ *                 example: true
  *     responses:
  *       200:
  *         description: Programs section updated successfully
