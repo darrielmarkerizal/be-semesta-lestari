@@ -222,6 +222,14 @@ const seedData = async () => {
     );
     logger.info('✅ Contact section seeded');
     
+    // Seed history section
+    await pool.query(
+      `INSERT INTO history_section (title, subtitle, image_url, is_active) 
+       VALUES (?, ?, ?, ?)`,
+      ['Our History', 'The journey of environmental conservation', null, true]
+    );
+    logger.info('✅ History section seeded');
+    
     // Seed history
     const historyItems = [
       [2010, 'Foundation', 'Semesta Lestari was founded with a vision to create positive environmental impact in Indonesia.', null, 1],

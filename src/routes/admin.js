@@ -33,6 +33,7 @@ const {
   donationCtaController,
   closingCtaController,
   historyController,
+  historySectionController,
   leadershipController,
   statisticsController,
   programsSectionController,
@@ -103,9 +104,13 @@ router.put('/homepage/contact-section', contactSectionController.update);
 
 // About Page Management
 router.get('/about/history', historyController.getAllAdmin);
+router.get('/about/history/:id', historyController.getByIdAdmin);
 router.post('/about/history', historyController.create);
 router.put('/about/history/:id', historyController.update);
 router.delete('/about/history/:id', historyController.delete);
+
+router.get('/about/history-section', historySectionController.get);
+router.put('/about/history-section', historySectionController.update);
 
 router.get('/about/missions', missionController.getAllAdmin);
 router.post('/about/missions', missionController.create);

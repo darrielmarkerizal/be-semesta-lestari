@@ -1,4 +1,5 @@
 const History = require('../models/History');
+const HistorySection = require('../models/HistorySection');
 const Vision = require('../models/Vision');
 const Mission = require('../models/Mission');
 const Leadership = require('../models/Leadership');
@@ -8,12 +9,13 @@ const { successResponse } = require('../utils/response');
  * @swagger
  * /api/about/history:
  *   get:
- *     summary: Get history/about content
+ *     summary: Get history section with header and items
+ *     description: Returns history section settings (title, subtitle, image) and all history items
  *     tags:
  *       - About
  *     responses:
  *       200:
- *         description: History retrieved
+ *         description: History section retrieved successfully
  *         content:
  *           application/json:
  *             schema:
@@ -21,31 +23,64 @@ const { successResponse } = require('../utils/response');
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: true
  *                 message:
  *                   type: string
+ *                   example: History section retrieved
  *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                       year:
- *                         type: integer
- *                         example: 2024
- *                       title:
- *                         type: string
- *                       content:
- *                         type: string
- *                       image_url:
- *                         type: string
- *                       order_position:
- *                         type: integer
+ *                   type: object
+ *                   properties:
+ *                     section:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         title:
+ *                           type: string
+ *                           example: Our History
+ *                         subtitle:
+ *                           type: string
+ *                           example: The journey of environmental conservation
+ *                         image_url:
+ *                           type: string
+ *                           nullable: true
+ *                           example: /uploads/history/hero.jpg
+ *                         is_active:
+ *                           type: boolean
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           year:
+ *                             type: integer
+ *                             example: 2024
+ *                           title:
+ *                             type: string
+ *                           content:
+ *                             type: string
+ *                           image_url:
+ *                             type: string
+ *                           order_position:
+ *                             type: integer
+ *                           is_active:
+ *                             type: boolean
  */
 const getHistory = async (req, res, next) => {
   try {
-    const history = await History.findAll(true);
-    return successResponse(res, history, 'History retrieved');
+    const [historySettings, historyItems] = await Promise.all([
+      HistorySection.findAll(true, 'created_at DESC'),
+      History.findAll(true)
+    ]);
+    
+    const response = {
+      section: historySettings[0] || null,
+      items: historyItems
+    };
+    
+    return successResponse(res, response, 'History section retrieved');
   } catch (error) {
     next(error);
   }

@@ -92,6 +92,17 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       )`,
       
+      // History section table
+      `CREATE TABLE IF NOT EXISTS history_section (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        title VARCHAR(255) NOT NULL,
+        subtitle VARCHAR(255),
+        image_url VARCHAR(500),
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )`,
+      
       // Leadership table
       `CREATE TABLE IF NOT EXISTS leadership (
         id INT PRIMARY KEY AUTO_INCREMENT,

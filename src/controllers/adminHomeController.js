@@ -580,6 +580,75 @@ const impactSectionController = {
  *         description: History record deleted successfully
  */
 const historyController = createGenericController(History, "History");
+
+/**
+ * @swagger
+ * /api/admin/about/history-section:
+ *   get:
+ *     summary: Get history section settings
+ *     tags:
+ *       - Admin - About
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: History section settings retrieved successfully
+ *   put:
+ *     summary: Update history section settings
+ *     tags:
+ *       - Admin - About
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Our History
+ *               subtitle:
+ *                 type: string
+ *                 example: The journey of environmental conservation
+ *               image_url:
+ *                 type: string
+ *                 example: /uploads/history/hero.jpg
+ *     responses:
+ *       200:
+ *         description: History section settings updated successfully
+ */
+const historySectionController = {
+  get: async (req, res, next) => {
+    try {
+      const section = await require('../models/HistorySection').getFirst();
+      return require("../utils/response").successResponse(
+        res,
+        section,
+        "History section settings retrieved",
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
+  update: async (req, res, next) => {
+    try {
+      const section = await require('../models/HistorySection').getFirst();
+      const updated = await require('../models/HistorySection').update(
+        section?.id || 1,
+        req.body,
+      );
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "History section settings updated",
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
+};
+
 /**
  * @swagger
  * /api/admin/about/leadership:
@@ -1201,6 +1270,7 @@ module.exports = {
   donationCtaController,
   closingCtaController,
   historyController,
+  historySectionController,
   leadershipController,
   statisticsController,
   programsSectionController,
