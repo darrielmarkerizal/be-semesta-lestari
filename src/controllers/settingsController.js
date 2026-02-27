@@ -7,6 +7,7 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  * /api/admin/config:
  *   get:
  *     summary: Get all settings
+ *     description: Retrieve all system settings including contact information, social media links, and other configuration values
  *     tags:
  *       - Admin - Settings
  *     security:
@@ -14,6 +15,38 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  *     responses:
  *       200:
  *         description: Settings retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Settings retrieved
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       key:
+ *                         type: string
+ *                         example: contact_email
+ *                       value:
+ *                         type: string
+ *                         example: info@semestalestari.com
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       updated_at:
+ *                         type: string
+ *                         format: date-time
+ *       401:
+ *         description: Unauthorized
  */
 const getAllSettings = async (req, res, next) => {
   try {
@@ -24,6 +57,61 @@ const getAllSettings = async (req, res, next) => {
   }
 };
 
+/**
+ * @swagger
+ * /api/admin/config/{key}:
+ *   get:
+ *     summary: Get setting by key
+ *     description: Retrieve a specific setting value by its key. Common keys include contact_email, contact_phones, contact_address, contact_work_hours, and social media links (social_facebook, social_instagram, social_twitter, social_youtube, social_linkedin, social_tiktok)
+ *     tags:
+ *       - Admin - Settings
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: key
+ *         in: path
+ *         required: true
+ *         description: Setting key (e.g., contact_email, social_facebook)
+ *         schema:
+ *           type: string
+ *           example: contact_email
+ *     responses:
+ *       200:
+ *         description: Setting retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Setting retrieved
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                       example: 1
+ *                     key:
+ *                       type: string
+ *                       example: contact_email
+ *                     value:
+ *                       type: string
+ *                       example: info@semestalestari.com
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *                     updated_at:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: Setting not found
+ *       401:
+ *         description: Unauthorized
+ */
 const getSettingByKey = async (req, res, next) => {
   try {
     const setting = await Settings.findByKey(req.params.key);
@@ -38,6 +126,84 @@ const getSettingByKey = async (req, res, next) => {
   }
 };
 
+/**
+ * @swagger
+ * /api/admin/config/{key}:
+ *   put:
+ *     summary: Update or create setting
+ *     description: Update an existing setting or create a new one if it doesn't exist (upsert). Use this endpoint to manage footer settings like contact information and social media links.
+ *     tags:
+ *       - Admin - Settings
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: key
+ *         in: path
+ *         required: true
+ *         description: Setting key to update or create
+ *         schema:
+ *           type: string
+ *           example: contact_email
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - value
+ *             properties:
+ *               value:
+ *                 type: string
+ *                 description: The new value for the setting. For contact_phones, use JSON array string format.
+ *                 example: info@semestalestari.com
+ *           examples:
+ *             email:
+ *               summary: Update contact email
+ *               value:
+ *                 value: info@semestalestari.com
+ *             phones:
+ *               summary: Update contact phones (JSON array)
+ *               value:
+ *                 value: '["(+62) 21-1234-5678", "(+62) 812-3456-7890"]'
+ *             social:
+ *               summary: Update social media link
+ *               value:
+ *                 value: https://facebook.com/semestalestari
+ *             address:
+ *               summary: Update address
+ *               value:
+ *                 value: Jl. Lingkungan Hijau No. 123, Jakarta
+ *             work_hours:
+ *               summary: Update work hours
+ *               value:
+ *                 value: Monday - Friday 9:00 AM - 5:00 PM
+ *     responses:
+ *       200:
+ *         description: Setting updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Setting updated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     key:
+ *                       type: string
+ *                       example: contact_email
+ *                     value:
+ *                       type: string
+ *                       example: info@semestalestari.com
+ *       401:
+ *         description: Unauthorized
+ */
 const updateSetting = async (req, res, next) => {
   try {
     const { value } = req.body;

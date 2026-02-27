@@ -595,7 +595,18 @@ const impactSectionController = {
  *       200:
  *         description: History record deleted successfully
  */
-const historyController = createGenericController(History, "History");
+const historyController = {
+  ...createGenericController(History, "History"),
+  // Override getAllAdmin to order by year
+  getAllAdmin: async (req, res, next) => {
+    try {
+      const data = await History.findAll(null, 'year ASC, order_position ASC');
+      return require('../utils/response').successResponse(res, data, 'History retrieved');
+    } catch (error) {
+      next(error);
+    }
+  }
+};
 
 /**
  * @swagger
@@ -1357,6 +1368,38 @@ const faqSectionController = {
  *     responses:
  *       200:
  *         description: Contact section retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     title:
+ *                       type: string
+ *                     subtitle:
+ *                       type: string
+ *                     image_url:
+ *                       type: string
+ *                     description:
+ *                       type: string
+ *                     address:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     phone:
+ *                       type: string
+ *                     work_hours:
+ *                       type: string
+ *                     is_active:
+ *                       type: boolean
  *   put:
  *     summary: Update contact section
  *     tags:
@@ -1372,18 +1415,31 @@ const faqSectionController = {
  *             properties:
  *               title:
  *                 type: string
+ *                 example: Get in Touch
+ *               subtitle:
+ *                 type: string
+ *                 example: We'd love to hear from you
+ *               image_url:
+ *                 type: string
+ *                 example: /uploads/contact-hero.jpg
  *               description:
  *                 type: string
+ *                 example: Have questions or want to get involved?
  *               address:
  *                 type: string
+ *                 example: Jl. Lingkungan Hijau No. 123, Jakarta
  *               email:
  *                 type: string
+ *                 example: info@semestalestari.com
  *               phone:
  *                 type: string
+ *                 example: +62 21 1234 5678
  *               work_hours:
  *                 type: string
+ *                 example: Monday - Friday 9:00 AM - 5:00 PM
  *               is_active:
  *                 type: boolean
+ *                 example: true
  *     responses:
  *       200:
  *         description: Contact section updated successfully

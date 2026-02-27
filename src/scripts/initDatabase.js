@@ -424,6 +424,8 @@ const createTables = async () => {
       `CREATE TABLE IF NOT EXISTS home_contact_section (
         id INT PRIMARY KEY AUTO_INCREMENT,
         title VARCHAR(255) NOT NULL,
+        subtitle VARCHAR(255),
+        image_url VARCHAR(500),
         description TEXT,
         address TEXT,
         email VARCHAR(255),

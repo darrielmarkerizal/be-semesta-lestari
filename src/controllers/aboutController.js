@@ -73,7 +73,7 @@ const getHistory = async (req, res, next) => {
   try {
     const [historySettings, historyItems] = await Promise.all([
       HistorySection.findAll(true, 'created_at DESC'),
-      History.findAll(true)
+      History.findAll(true, 'year ASC, order_position ASC')
     ]);
     
     const response = {

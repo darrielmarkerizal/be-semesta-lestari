@@ -209,10 +209,13 @@ const seedData = async () => {
     
     // Seed contact section
     await pool.query(
-      `INSERT INTO home_contact_section (title, description, address, email, phone, work_hours, is_active) 
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO home_contact_section (title, subtitle, image_url, description, address, email, phone, work_hours, is_active) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE title=VALUES(title), subtitle=VALUES(subtitle), image_url=VALUES(image_url), description=VALUES(description)`,
       [
         'Get in Touch',
+        'We\'d love to hear from you',
+        '/uploads/contact-hero.jpg',
         'Have questions or want to get involved? We\'d love to hear from you!',
         'Jl. Lingkungan Hijau No. 123, Jakarta, Indonesia',
         'info@semestalestari.com',
@@ -233,10 +236,18 @@ const seedData = async () => {
     
     // Seed history
     const historyItems = [
-      [2010, 'Foundation', 'The beginning of our journey', 'Semesta Lestari was founded with a vision to create positive environmental impact in Indonesia.', null, 1],
-      [2015, 'Expansion', 'Growing our reach', 'Expanded our programs to reach 25 communities across Java and Bali, planting over 5,000 trees.', null, 2],
-      [2020, 'Recognition', 'National acknowledgment', 'Received national recognition for our environmental conservation efforts and community engagement programs.', null, 3],
-      [2024, 'Milestone', 'A decade of impact', 'Reached 10,000 trees planted and 500+ active volunteers supporting our mission.', null, 4]
+      [2010, 'Foundation', 'The beginning of our journey', 'Semesta Lestari was founded with a vision to create positive environmental impact in Indonesia. Our founders recognized the urgent need for environmental conservation and community-based sustainability programs.', '/uploads/history-2010.jpg', 1],
+      [2012, 'First Programs', 'Launching community initiatives', 'Launched our first tree planting and environmental education programs in Jakarta and surrounding areas. Engaged with 10 local communities and planted 1,000 trees in the first year.', '/uploads/history-2012.jpg', 2],
+      [2014, 'Partnership Growth', 'Building strategic alliances', 'Established partnerships with local governments and international environmental organizations. These collaborations enabled us to scale our impact and reach more communities.', '/uploads/history-2014.jpg', 3],
+      [2015, 'Expansion', 'Growing our reach', 'Expanded our programs to reach 25 communities across Java and Bali, planting over 5,000 trees. Introduced waste management and recycling programs in partnership with local authorities.', '/uploads/history-2015.jpg', 4],
+      [2017, 'Education Focus', 'Empowering through knowledge', 'Launched comprehensive environmental education programs in schools. Trained over 100 teachers and reached 5,000 students with our curriculum on sustainability and conservation.', '/uploads/history-2017.jpg', 5],
+      [2018, 'Innovation Hub', 'Technology for sustainability', 'Established our Innovation Hub to develop technology-driven solutions for environmental challenges. Introduced mobile apps for community engagement and environmental monitoring.', '/uploads/history-2018.jpg', 6],
+      [2020, 'Recognition', 'National acknowledgment', 'Received national recognition for our environmental conservation efforts and community engagement programs. Awarded "Best Environmental NGO" by the Ministry of Environment and Forestry.', '/uploads/history-2020.jpg', 7],
+      [2021, 'COVID Response', 'Adapting to challenges', 'Adapted our programs during the pandemic, launching virtual environmental education and supporting communities with sustainable livelihood programs. Maintained our impact despite global challenges.', '/uploads/history-2021.jpg', 8],
+      [2022, 'Regional Expansion', 'Beyond Java and Bali', 'Expanded operations to Sumatra, Kalimantan, and Sulawesi. Established regional offices and trained local teams to lead conservation efforts in their communities.', '/uploads/history-2022.jpg', 9],
+      [2023, 'Youth Movement', 'Engaging the next generation', 'Launched the Youth Environmental Leaders program, training 500 young activists. Created a network of youth-led environmental initiatives across Indonesia.', '/uploads/history-2023.jpg', 10],
+      [2024, 'Milestone', 'A decade of impact', 'Reached 10,000 trees planted and 500+ active volunteers supporting our mission. Celebrated 14 years of environmental stewardship with communities across Indonesia.', '/uploads/history-2024.jpg', 11],
+      [2025, 'Future Vision', 'Scaling for greater impact', 'Launched our 2025-2030 strategic plan focusing on climate action, biodiversity conservation, and sustainable development. Committed to planting 50,000 trees and reaching 100 communities by 2030.', '/uploads/history-2025.jpg', 12]
     ];
     
     for (const [year, title, subtitle, content, image_url, order_position] of historyItems) {
