@@ -84,6 +84,7 @@ const createTables = async () => {
         id INT PRIMARY KEY AUTO_INCREMENT,
         year INT NOT NULL,
         title VARCHAR(255) NOT NULL,
+        subtitle VARCHAR(255),
         content LONGTEXT NOT NULL,
         image_url VARCHAR(500),
         order_position INT DEFAULT 0,

@@ -514,14 +514,22 @@ const impactSectionController = {
  *                 example: 2024
  *               title:
  *                 type: string
+ *                 example: Foundation Year
+ *               subtitle:
+ *                 type: string
+ *                 example: The beginning of our journey
  *               content:
  *                 type: string
+ *                 example: Semesta Lestari was founded with a vision...
  *               image_url:
  *                 type: string
+ *                 example: /uploads/history/2024.jpg
  *               order_position:
  *                 type: integer
+ *                 example: 1
  *               is_active:
  *                 type: boolean
+ *                 example: true
  *     responses:
  *       201:
  *         description: History record created successfully
@@ -552,14 +560,22 @@ const impactSectionController = {
  *                 example: 2024
  *               title:
  *                 type: string
+ *                 example: Foundation Year
+ *               subtitle:
+ *                 type: string
+ *                 example: The beginning of our journey
  *               content:
  *                 type: string
+ *                 example: Semesta Lestari was founded with a vision...
  *               image_url:
  *                 type: string
+ *                 example: /uploads/history/2024.jpg
  *               order_position:
  *                 type: integer
+ *                 example: 1
  *               is_active:
  *                 type: boolean
+ *                 example: true
  *     responses:
  *       200:
  *         description: History record updated successfully

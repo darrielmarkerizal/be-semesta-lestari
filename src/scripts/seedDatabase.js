@@ -232,16 +232,16 @@ const seedData = async () => {
     
     // Seed history
     const historyItems = [
-      [2010, 'Foundation', 'Semesta Lestari was founded with a vision to create positive environmental impact in Indonesia.', null, 1],
-      [2015, 'Expansion', 'Expanded our programs to reach 25 communities across Java and Bali, planting over 5,000 trees.', null, 2],
-      [2020, 'Recognition', 'Received national recognition for our environmental conservation efforts and community engagement programs.', null, 3],
-      [2024, 'Milestone', 'Reached 10,000 trees planted and 500+ active volunteers supporting our mission.', null, 4]
+      [2010, 'Foundation', 'The beginning of our journey', 'Semesta Lestari was founded with a vision to create positive environmental impact in Indonesia.', null, 1],
+      [2015, 'Expansion', 'Growing our reach', 'Expanded our programs to reach 25 communities across Java and Bali, planting over 5,000 trees.', null, 2],
+      [2020, 'Recognition', 'National acknowledgment', 'Received national recognition for our environmental conservation efforts and community engagement programs.', null, 3],
+      [2024, 'Milestone', 'A decade of impact', 'Reached 10,000 trees planted and 500+ active volunteers supporting our mission.', null, 4]
     ];
     
-    for (const [year, title, content, image_url, order_position] of historyItems) {
+    for (const [year, title, subtitle, content, image_url, order_position] of historyItems) {
       await pool.query(
-        `INSERT INTO history (year, title, content, image_url, order_position) VALUES (?, ?, ?, ?, ?)`,
-        [year, title, content, image_url, order_position]
+        `INSERT INTO history (year, title, subtitle, content, image_url, order_position) VALUES (?, ?, ?, ?, ?, ?)`,
+        [year, title, subtitle, content, image_url, order_position]
       );
     }
     logger.info('✅ History seeded');
