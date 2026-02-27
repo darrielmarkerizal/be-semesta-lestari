@@ -228,10 +228,7 @@ const getHomePage = async (req, res, next) => {
       partners,
       faqSection,
       faqs,
-      contactEmail,
-      contactPhones,
-      contactAddress,
-      contactWorkHours,
+      contactSection,
       closingCta
     ] = await Promise.all([
       HeroSection.getFirst(),
@@ -247,22 +244,9 @@ const getHomePage = async (req, res, next) => {
       Partner.findAll(true),
       HomeFaqSection.getFirst(),
       FAQ.findAll(true),
-      Settings.findByKey('contact_email'),
-      Settings.findByKey('contact_phones'),
-      Settings.findByKey('contact_address'),
-      Settings.findByKey('contact_work_hours'),
+      require('../models/HomeContactSection').getFirst(),
       ClosingCTA.getFirst()
     ]);
-    
-    // Parse phones from JSON string to array
-    let phonesArray = [];
-    if (contactPhones?.value) {
-      try {
-        phonesArray = JSON.parse(contactPhones.value);
-      } catch (e) {
-        phonesArray = [contactPhones.value];
-      }
-    }
     
     // Get highlighted program
     const highlightedProgram = programs.find(p => p.is_highlighted) || null;
@@ -290,12 +274,7 @@ const getHomePage = async (req, res, next) => {
         section: faqSection,
         items: faqs
       },
-      contact: {
-        email: contactEmail?.value || '',
-        phones: phonesArray,
-        address: contactAddress?.value || '',
-        work_hours: contactWorkHours?.value || ''
-      },
+      contact: contactSection,
       closingCta
     }, 'Home page data retrieved');
   } catch (error) {

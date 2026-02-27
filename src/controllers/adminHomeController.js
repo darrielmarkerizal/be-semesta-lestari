@@ -1349,13 +1349,36 @@ const faqSectionController = {
  *       200:
  *         description: Contact section updated successfully
  */
-// Contact section now uses the same data as /api/contact
-// Redirect to contact controller methods
-const contactController = require("./contactController");
-
+// Contact section now uses HomeContactSection model
 const contactSectionController = {
-  get: contactController.getContactInfoAdmin,
-  update: contactController.updateContactInfo,
+  get: async (req, res, next) => {
+    try {
+      const section = await require('../models/HomeContactSection').getFirst();
+      return require("../utils/response").successResponse(
+        res,
+        section,
+        "Contact section settings retrieved",
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
+  update: async (req, res, next) => {
+    try {
+      const section = await require('../models/HomeContactSection').getFirst();
+      const updated = await require('../models/HomeContactSection').update(
+        section?.id || 1,
+        req.body,
+      );
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Contact section settings updated",
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 module.exports = {
