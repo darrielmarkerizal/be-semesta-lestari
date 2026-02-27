@@ -1,21 +1,82 @@
 const Partner = require('../models/Partner');
+const HomePartnersSection = require('../models/HomePartnersSection');
 const { successResponse, errorResponse } = require('../utils/response');
 
 /**
  * @swagger
  * /api/partners:
  *   get:
- *     summary: Get all partners
+ *     summary: Get partners section with header and items
+ *     description: Returns partners section settings (title, subtitle, image) and all partner items
  *     tags:
  *       - Partners
  *     responses:
  *       200:
- *         description: Partners retrieved successfully
+ *         description: Partners section retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Partners section retrieved
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     section:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         title:
+ *                           type: string
+ *                           example: Our Partners
+ *                         subtitle:
+ *                           type: string
+ *                           example: Working together for a sustainable future
+ *                         image_url:
+ *                           type: string
+ *                           nullable: true
+ *                           example: /uploads/partners/hero.jpg
+ *                         is_active:
+ *                           type: boolean
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           name:
+ *                             type: string
+ *                           description:
+ *                             type: string
+ *                           logo_url:
+ *                             type: string
+ *                           website:
+ *                             type: string
+ *                           order_position:
+ *                             type: integer
+ *                           is_active:
+ *                             type: boolean
  */
 const getAllPartners = async (req, res, next) => {
   try {
-    const data = await Partner.findAll(true);
-    return successResponse(res, data, 'Partner retrieved');
+    const [partnersSettings, partnerItems] = await Promise.all([
+      HomePartnersSection.findAll(true, 'created_at DESC'),
+      Partner.findAll(true)
+    ]);
+    
+    const response = {
+      section: partnersSettings[0] || null,
+      items: partnerItems
+    };
+    
+    return successResponse(res, response, 'Partners section retrieved');
   } catch (error) {
     next(error);
   }

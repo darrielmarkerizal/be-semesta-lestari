@@ -1026,8 +1026,13 @@ const programsSectionController = {
  *             properties:
  *               title:
  *                 type: string
+ *                 example: Our Partners
  *               subtitle:
  *                 type: string
+ *                 example: Working together for a sustainable future
+ *               image_url:
+ *                 type: string
+ *                 example: /uploads/partners/hero.jpg
  *               is_active:
  *                 type: boolean
  *     responses:

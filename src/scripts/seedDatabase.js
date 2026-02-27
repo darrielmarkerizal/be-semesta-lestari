@@ -162,9 +162,9 @@ const seedData = async () => {
     
     // Seed partners section
     await pool.query(
-      `INSERT INTO home_partners_section (title, subtitle, is_active) 
-       VALUES (?, ?, ?)`,
-      ['Our Partners', 'Working together for a sustainable future', true]
+      `INSERT INTO home_partners_section (title, subtitle, image_url, is_active) 
+       VALUES (?, ?, ?, ?)`,
+      ['Our Partners', 'Working together for a sustainable future', null, true]
     );
     logger.info('✅ Partners section seeded');
     
