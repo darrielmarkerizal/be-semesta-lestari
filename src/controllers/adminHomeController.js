@@ -2,6 +2,7 @@ const HeroSection = require("../models/HeroSection");
 const Vision = require("../models/Vision");
 const Mission = require("../models/Mission");
 const ImpactSection = require("../models/ImpactSection");
+const HomeImpactSection = require("../models/HomeImpactSection");
 const DonationCTA = require("../models/DonationCTA");
 const ClosingCTA = require("../models/ClosingCTA");
 const History = require("../models/History");
@@ -255,16 +256,54 @@ const missionController = createGenericController(Mission, "Mission");
  * @swagger
  * /api/admin/homepage/impact:
  *   get:
- *     summary: Get all impact sections
+ *     summary: Get all impact items
+ *     description: Returns all impact items (stats/achievements). Use /api/admin/homepage/impact-section for section header settings.
  *     tags:
  *       - Admin - Homepage
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Impact sections retrieved successfully
+ *         description: Impact items retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       title:
+ *                         type: string
+ *                         example: Trees Planted
+ *                       description:
+ *                         type: string
+ *                         example: Trees planted across communities
+ *                       icon_url:
+ *                         type: string
+ *                         nullable: true
+ *                       image_url:
+ *                         type: string
+ *                         nullable: true
+ *                         description: Main image for impact item
+ *                       stats_number:
+ *                         type: string
+ *                         example: 10,000+
+ *                       order_position:
+ *                         type: integer
+ *                       is_active:
+ *                         type: boolean
  *   post:
- *     summary: Create new impact section
+ *     summary: Create new impact item
+ *     description: Create a new impact stat/achievement item
  *     tags:
  *       - Admin - Homepage
  *     security:
@@ -280,28 +319,36 @@ const missionController = createGenericController(Mission, "Mission");
  *             properties:
  *               title:
  *                 type: string
+ *                 example: Trees Planted
  *               description:
  *                 type: string
+ *                 example: Trees planted across communities
  *               icon_url:
  *                 type: string
+ *                 example: /uploads/icons/tree.svg
  *               image_url:
  *                 type: string
- *                 description: Main image for impact section
+ *                 example: /uploads/impact_section/trees.jpg
+ *                 description: Main image for impact item
  *               stats_number:
  *                 type: string
+ *                 example: 10,000+
  *               order_position:
  *                 type: integer
+ *                 example: 1
  *               is_active:
  *                 type: boolean
+ *                 example: true
  *     responses:
  *       201:
- *         description: Impact section created successfully
+ *         description: Impact item created successfully
  */
 /**
  * @swagger
  * /api/admin/homepage/impact/{id}:
  *   put:
- *     summary: Update impact section
+ *     summary: Update impact item
+ *     description: Update an existing impact stat/achievement item
  *     tags:
  *       - Admin - Homepage
  *     security:
@@ -320,24 +367,32 @@ const missionController = createGenericController(Mission, "Mission");
  *             properties:
  *               title:
  *                 type: string
+ *                 example: Trees Planted
  *               description:
  *                 type: string
+ *                 example: Trees planted across communities
  *               icon_url:
  *                 type: string
+ *                 example: /uploads/icons/tree.svg
  *               image_url:
  *                 type: string
- *                 description: Main image for impact section
+ *                 example: /uploads/impact_section/trees.jpg
+ *                 description: Main image for impact item
  *               stats_number:
  *                 type: string
+ *                 example: 15,000+
  *               order_position:
  *                 type: integer
+ *                 example: 1
  *               is_active:
  *                 type: boolean
+ *                 example: true
  *     responses:
  *       200:
- *         description: Impact section updated successfully
+ *         description: Impact item updated successfully
  *   delete:
- *     summary: Delete impact section
+ *     summary: Delete impact item
+ *     description: Delete an impact stat/achievement item
  *     tags:
  *       - Admin - Homepage
  *     security:
@@ -350,12 +405,81 @@ const missionController = createGenericController(Mission, "Mission");
  *           type: integer
  *     responses:
  *       200:
- *         description: Impact section deleted successfully
+ *         description: Impact item deleted successfully
  */
 const impactController = createGenericController(
   ImpactSection,
   "Impact Section",
 );
+
+/**
+ * @swagger
+ * /api/admin/homepage/impact-section:
+ *   get:
+ *     summary: Get impact section settings
+ *     tags:
+ *       - Admin - Homepage
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Impact section settings retrieved successfully
+ *   put:
+ *     summary: Update impact section settings
+ *     tags:
+ *       - Admin - Homepage
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Our Impact
+ *               subtitle:
+ *                 type: string
+ *                 example: See the difference we've made together
+ *               image_url:
+ *                 type: string
+ *                 example: /uploads/impact/hero.jpg
+ *     responses:
+ *       200:
+ *         description: Impact section settings updated successfully
+ */
+const impactSectionController = {
+  get: async (req, res, next) => {
+    try {
+      const section = await HomeImpactSection.getFirst();
+      return require("../utils/response").successResponse(
+        res,
+        section,
+        "Impact section settings retrieved",
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
+  update: async (req, res, next) => {
+    try {
+      const section = await HomeImpactSection.getFirst();
+      const updated = await HomeImpactSection.update(
+        section?.id || 1,
+        req.body,
+      );
+      return require("../utils/response").successResponse(
+        res,
+        updated,
+        "Impact section settings updated",
+      );
+    } catch (error) {
+      next(error);
+    }
+  },
+};
+
 /**
  * @swagger
  * /api/admin/about/history:
@@ -1063,6 +1187,7 @@ module.exports = {
   visionController,
   missionController,
   impactController,
+  impactSectionController,
   donationCtaController,
   closingCtaController,
   historyController,

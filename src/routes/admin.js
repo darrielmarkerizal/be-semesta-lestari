@@ -29,6 +29,7 @@ const {
   visionController,
   missionController,
   impactController,
+  impactSectionController,
   donationCtaController,
   closingCtaController,
   historyController,
@@ -71,9 +72,13 @@ router.put('/homepage/missions/:id', missionController.update);
 router.delete('/homepage/missions/:id', missionController.delete);
 
 router.get('/homepage/impact', impactController.getAllAdmin);
+router.get('/homepage/impact/:id', impactController.getByIdAdmin);
 router.post('/homepage/impact', impactController.create);
 router.put('/homepage/impact/:id', impactController.update);
 router.delete('/homepage/impact/:id', impactController.delete);
+
+router.get('/homepage/impact-section', impactSectionController.get);
+router.put('/homepage/impact-section', impactSectionController.update);
 
 router.get('/homepage/donation-cta', donationCtaController.get);
 router.put('/homepage/donation-cta/:id', donationCtaController.update);

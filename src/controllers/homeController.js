@@ -2,6 +2,7 @@ const HeroSection = require('../models/HeroSection');
 const Vision = require('../models/Vision');
 const Mission = require('../models/Mission');
 const ImpactSection = require('../models/ImpactSection');
+const HomeImpactSection = require('../models/HomeImpactSection');
 const DonationCTA = require('../models/DonationCTA');
 const ClosingCTA = require('../models/ClosingCTA');
 const Program = require('../models/Program');
@@ -217,6 +218,7 @@ const getHomePage = async (req, res, next) => {
       hero,
       vision,
       missions,
+      impactSection,
       impact,
       programsSection,
       programs,
@@ -235,6 +237,7 @@ const getHomePage = async (req, res, next) => {
       HeroSection.getFirst(),
       Vision.getFirst(),
       Mission.findAll(true),
+      HomeImpactSection.findAll(true, 'created_at DESC').then(rows => rows[0]),
       ImpactSection.findAll(true),
       HomeProgramsSection.getFirst(),
       Program.findAll(true),
@@ -268,7 +271,10 @@ const getHomePage = async (req, res, next) => {
       hero,
       vision,
       missions,
-      impact,
+      impact: {
+        section: impactSection,
+        items: impact
+      },
       programs: {
         section: programsSection,
         items: programs,
@@ -361,17 +367,84 @@ const getMissions = async (req, res, next) => {
  * @swagger
  * /api/impact:
  *   get:
- *     summary: Get impact sections
+ *     summary: Get impact section with header and items
+ *     description: Returns impact section settings (title, subtitle, image) and all impact items
  *     tags:
  *       - Home
  *     responses:
  *       200:
- *         description: Impact sections retrieved
+ *         description: Impact section retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Impact section retrieved
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     section:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         title:
+ *                           type: string
+ *                           example: Our Impact
+ *                         subtitle:
+ *                           type: string
+ *                           example: See the difference we've made together
+ *                         image_url:
+ *                           type: string
+ *                           nullable: true
+ *                           example: /uploads/impact/hero.jpg
+ *                         is_active:
+ *                           type: boolean
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           title:
+ *                             type: string
+ *                             example: Trees Planted
+ *                           description:
+ *                             type: string
+ *                             example: Trees planted across communities
+ *                           icon_url:
+ *                             type: string
+ *                             nullable: true
+ *                           image_url:
+ *                             type: string
+ *                             nullable: true
+ *                           stats_number:
+ *                             type: string
+ *                             example: 10,000+
+ *                           order_position:
+ *                             type: integer
+ *                           is_active:
+ *                             type: boolean
  */
 const getImpact = async (req, res, next) => {
   try {
-    const impact = await ImpactSection.findAll(true);
-    return successResponse(res, impact, 'Impact sections retrieved');
+    const [impactSettings, impactItems] = await Promise.all([
+      HomeImpactSection.findAll(true, 'created_at DESC'),
+      ImpactSection.findAll(true)
+    ]);
+    
+    const response = {
+      section: impactSettings[0] || null,
+      items: impactItems
+    };
+    
+    return successResponse(res, response, 'Impact section retrieved');
   } catch (error) {
     next(error);
   }

@@ -80,6 +80,14 @@ const seedData = async () => {
     }
     logger.info('✅ Impact sections seeded');
     
+    // Seed impact section settings
+    await pool.query(
+      `INSERT INTO home_impact_section (title, subtitle, image_url, is_active) 
+       VALUES (?, ?, ?, ?)`,
+      ['Our Impact', 'See the difference we\'ve made together', null, true]
+    );
+    logger.info('✅ Impact section settings seeded');
+    
     // Seed programs section
     await pool.query(
       `INSERT INTO home_programs_section (title, subtitle, is_active) 
