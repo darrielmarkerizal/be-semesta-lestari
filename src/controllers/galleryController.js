@@ -78,21 +78,38 @@ const getGalleryById = async (req, res, next) => {
  * /api/admin/gallery:
  *   get:
  *     summary: Get all gallery items (admin)
+ *     description: Get all gallery items including inactive ones with search and category filtering (admin only)
  *     tags:
  *       - Admin - Gallery
  *     security:
  *       - BearerAuth: []
  *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search in title and category name (optional)
+ *         schema:
+ *           type: string
+ *           example: tree planting
+ *       - name: category
+ *         in: query
+ *         description: Filter by category slug (optional)
+ *         schema:
+ *           type: string
+ *           example: events
  *       - name: page
  *         in: query
+ *         description: Page number for pagination
  *         schema:
  *           type: integer
  *           default: 1
+ *           example: 1
  *       - name: limit
  *         in: query
+ *         description: Number of items per page
  *         schema:
  *           type: integer
  *           default: 10
+ *           example: 10
  *     responses:
  *       200:
  *         description: Gallery items retrieved successfully
@@ -134,8 +151,10 @@ const getAllGalleryAdmin = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const categorySlug = req.query.category || null;
+    const search = req.query.search || null;
     
-    const { data, total } = await GalleryItem.findAllPaginated(page, limit, null);
+    const { data, total } = await GalleryItem.findAllPaginated(page, limit, null, categorySlug, search);
     return paginatedResponse(res, data, page, limit, total, 'Gallery items retrieved');
   } catch (error) {
     next(error);

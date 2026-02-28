@@ -6,7 +6,7 @@ class GalleryItem extends BaseModel {
     super('gallery_items');
   }
   
-  async findAllPaginated(page = 1, limit = 10, isActive = null, categorySlug = null) {
+  async findAllPaginated(page = 1, limit = 10, isActive = null, categorySlug = null, search = null) {
     const offset = (page - 1) * limit;
     let query = `
       SELECT 
@@ -29,6 +29,12 @@ class GalleryItem extends BaseModel {
       params.push(categorySlug);
     }
     
+    if (search) {
+      conditions.push('(g.title LIKE ? OR gc.name LIKE ?)');
+      const searchPattern = `%${search}%`;
+      params.push(searchPattern, searchPattern);
+    }
+    
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
     }
@@ -42,7 +48,7 @@ class GalleryItem extends BaseModel {
     let countQuery = 'SELECT COUNT(*) as total FROM gallery_items g';
     const countParams = [];
     
-    if (categorySlug) {
+    if (categorySlug || search) {
       countQuery += ' LEFT JOIN gallery_categories gc ON g.category_id = gc.id';
     }
     
@@ -55,6 +61,12 @@ class GalleryItem extends BaseModel {
     if (categorySlug) {
       countConditions.push('gc.slug = ?');
       countParams.push(categorySlug);
+    }
+    
+    if (search) {
+      countConditions.push('(g.title LIKE ? OR gc.name LIKE ?)');
+      const searchPattern = `%${search}%`;
+      countParams.push(searchPattern, searchPattern);
     }
     
     if (countConditions.length > 0) {
