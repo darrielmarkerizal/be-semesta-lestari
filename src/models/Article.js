@@ -2,7 +2,7 @@ const { pool } = require('../config/database');
 const slugify = require('slugify');
 
 class Article {
-  static async findAll(page = 1, limit = 10, isActive = true, categorySlug = null) {
+  static async findAll(page = 1, limit = 10, isActive = true, categorySlug = null, search = null) {
     const offset = (page - 1) * limit;
     let query = `
       SELECT 
@@ -23,6 +23,12 @@ class Article {
     if (categorySlug) {
       conditions.push('c.slug = ?');
       params.push(categorySlug);
+    }
+    
+    if (search) {
+      conditions.push('(a.title LIKE ? OR a.subtitle LIKE ? OR a.content LIKE ? OR a.excerpt LIKE ?)');
+      const searchPattern = `%${search}%`;
+      params.push(searchPattern, searchPattern, searchPattern, searchPattern);
     }
     
     if (conditions.length > 0) {
@@ -51,6 +57,12 @@ class Article {
     if (categorySlug) {
       countConditions.push('c.slug = ?');
       countParams.push(categorySlug);
+    }
+    
+    if (search) {
+      countConditions.push('(a.title LIKE ? OR a.subtitle LIKE ? OR a.content LIKE ? OR a.excerpt LIKE ?)');
+      const searchPattern = `%${search}%`;
+      countParams.push(searchPattern, searchPattern, searchPattern, searchPattern);
     }
     
     if (countConditions.length > 0) {

@@ -6,7 +6,7 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  * /api/articles:
  *   get:
  *     summary: Get all articles (public)
- *     description: Get paginated articles with optional category filtering. All articles include category information (category_id, category_name, category_slug).
+ *     description: Get paginated articles with optional category filtering and search. All articles include category information (category_id, category_name, category_slug).
  *     tags:
  *       - Articles
  *     parameters:
@@ -16,6 +16,12 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  *         schema:
  *           type: string
  *           example: environmental-conservation
+ *       - name: search
+ *         in: query
+ *         description: Search in title, subtitle, content, and excerpt (optional)
+ *         schema:
+ *           type: string
+ *           example: forest conservation
  *       - name: page
  *         in: query
  *         description: Page number for pagination
@@ -56,8 +62,9 @@ const getAllArticles = async (req, res, next) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const categorySlug = req.query.category || null;
+    const search = req.query.search || null;
     
-    const { articles, total } = await Article.findAll(page, limit, true, categorySlug);
+    const { articles, total } = await Article.findAll(page, limit, true, categorySlug, search);
     
     return paginatedResponse(res, articles, page, limit, total, 'Articles retrieved');
   } catch (error) {
@@ -169,12 +176,24 @@ const incrementViews = async (req, res, next) => {
  * /api/admin/articles:
  *   get:
  *     summary: Get all articles (admin)
- *     description: Get all articles including inactive ones with category information (admin only)
+ *     description: Get all articles including inactive ones with category information and search (admin only)
  *     tags:
  *       - Admin - Articles
  *     security:
  *       - BearerAuth: []
  *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search in title, subtitle, content, and excerpt (optional)
+ *         schema:
+ *           type: string
+ *           example: forest conservation
+ *       - name: category
+ *         in: query
+ *         description: Filter by category slug (optional)
+ *         schema:
+ *           type: string
+ *           example: environmental-conservation
  *       - name: page
  *         in: query
  *         description: Page number for pagination
@@ -280,8 +299,10 @@ const getAllArticlesAdmin = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const categorySlug = req.query.category || null;
+    const search = req.query.search || null;
     
-    const { articles, total } = await Article.findAll(page, limit, null);
+    const { articles, total } = await Article.findAll(page, limit, null, categorySlug, search);
     
     return paginatedResponse(res, articles, page, limit, total, 'Articles retrieved');
   } catch (error) {
