@@ -141,22 +141,32 @@ const getAwardById = async (req, res, next) => {
  * /api/admin/awards:
  *   get:
  *     summary: Get all awards (admin)
- *     description: Get all awards including inactive ones (admin only)
+ *     description: Get all awards including inactive ones with search capability (admin only)
  *     tags:
  *       - Admin - Awards
  *     security:
  *       - BearerAuth: []
  *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search in title, description, issuer, and year (optional)
+ *         schema:
+ *           type: string
+ *           example: environmental
  *       - name: page
  *         in: query
+ *         description: Page number for pagination
  *         schema:
  *           type: integer
  *           default: 1
+ *           example: 1
  *       - name: limit
  *         in: query
+ *         description: Number of items per page
  *         schema:
  *           type: integer
  *           default: 10
+ *           example: 10
  *     responses:
  *       200:
  *         description: Awards retrieved successfully
@@ -199,8 +209,9 @@ const getAllAwardsAdmin = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || null;
     
-    const { data, total } = await Award.findAllPaginated(page, limit, null);
+    const { data, total } = await Award.findAllPaginatedWithSearch(page, limit, null, search);
     return paginatedResponse(res, data, page, limit, total, 'Awards retrieved');
   } catch (error) {
     next(error);
