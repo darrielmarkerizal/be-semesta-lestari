@@ -222,6 +222,11 @@ router.delete('/contact/show-messages/:id', contactController.deleteMessage);
 router.get('/contact/info', contactController.getContactInfoAdmin);
 router.put('/contact/info', contactController.updateContactInfo);
 
+// Footer Management
+const footerController = require('../controllers/footerController');
+router.get('/footer', footerController.getFooterAdmin);
+router.put('/footer', footerController.updateFooterAdmin);
+
 // Settings Management
 router.get('/config', settingsController.getAllSettings);
 router.get('/config/:key', settingsController.getSettingByKey);

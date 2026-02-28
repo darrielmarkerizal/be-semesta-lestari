@@ -753,6 +753,7 @@ This is just the beginning. Together, we can create lasting environmental change
       ['contact_phones', '["(+62) 21-1234-5678", "(+62) 812-3456-7890"]'],
       ['contact_address', 'Jl. Lingkungan Hijau No. 123, Jakarta Selatan, DKI Jakarta 12345, Indonesia'],
       ['contact_work_hours', 'Monday - Friday: 09:00 AM - 05:00 PM\\nSaturday: 09:00 AM - 01:00 PM\\nSunday: Closed'],
+      ['contact_gmaps', 'https://maps.google.com/?q=-6.200000,106.816666'],
       ['social_facebook', 'https://facebook.com/semestalestari'],
       ['social_instagram', 'https://instagram.com/semestalestari'],
       ['social_twitter', 'https://twitter.com/semestalestari'],
