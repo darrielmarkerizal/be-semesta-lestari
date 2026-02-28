@@ -485,10 +485,32 @@ const impactSectionController = {
  * /api/admin/about/history:
  *   get:
  *     summary: Get all history records
+ *     description: Get all history records with search and pagination (admin only)
  *     tags:
  *       - Admin - About
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search in title, content, and year (optional)
+ *         schema:
+ *           type: string
+ *           example: foundation
+ *       - name: page
+ *         in: query
+ *         description: Page number for pagination
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           example: 1
+ *       - name: limit
+ *         in: query
+ *         description: Number of items per page
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           example: 10
  *     responses:
  *       200:
  *         description: History records retrieved successfully
@@ -597,11 +619,15 @@ const impactSectionController = {
  */
 const historyController = {
   ...createGenericController(History, "History"),
-  // Override getAllAdmin to order by year
+  // Override getAllAdmin to add search and pagination
   getAllAdmin: async (req, res, next) => {
     try {
-      const data = await History.findAll(null, 'year ASC, order_position ASC');
-      return require('../utils/response').successResponse(res, data, 'History retrieved');
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.search || null;
+      
+      const { data, total } = await History.findAllPaginatedWithSearch(page, limit, null, search);
+      return require('../utils/response').paginatedResponse(res, data, page, limit, total, 'History retrieved');
     } catch (error) {
       next(error);
     }
@@ -777,14 +803,63 @@ const leadershipSectionController = {
  * @swagger
  * /api/admin/about/leadership:
  *   get:
- *     summary: Get all leadership members
+ *     summary: Get all leadership members with pagination and search
  *     tags:
  *       - Admin - About
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search in name, position, bio, and email (optional)
+ *         schema:
+ *           type: string
+ *           example: director
+ *       - name: page
+ *         in: query
+ *         description: Page number for pagination
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           example: 1
+ *       - name: limit
+ *         in: query
+ *         description: Number of items per page
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           example: 10
  *     responses:
  *       200:
  *         description: Leadership members retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalItems:
+ *                       type: integer
+ *                     itemsPerPage:
+ *                       type: integer
+ *                     hasNextPage:
+ *                       type: boolean
+ *                     hasPrevPage:
+ *                       type: boolean
  *   post:
  *     summary: Create new leadership member
  *     tags:
@@ -892,6 +967,20 @@ const leadershipSectionController = {
  *         description: Leadership member deleted successfully
  */
 const leadershipController = createGenericController(Leadership, "Leadership");
+
+// Override getAllAdmin to add pagination and search
+leadershipController.getAllAdmin = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || null;
+    
+    const { data, total } = await Leadership.findAllPaginatedWithSearch(page, limit, null, search);
+    return require('../utils/response').paginatedResponse(res, data, page, limit, total, 'Leadership retrieved');
+  } catch (error) {
+    next(error);
+  }
+};
 
 /**
  * @swagger

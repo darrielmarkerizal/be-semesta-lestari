@@ -113,14 +113,63 @@ const getPartnerById = async (req, res, next) => {
  * @swagger
  * /api/admin/partners:
  *   get:
- *     summary: Get all partners (admin)
+ *     summary: Get all partners with pagination and search (admin)
  *     tags:
  *       - Admin - Partners
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search in name, description, and website (optional)
+ *         schema:
+ *           type: string
+ *           example: foundation
+ *       - name: page
+ *         in: query
+ *         description: Page number for pagination
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           example: 1
+ *       - name: limit
+ *         in: query
+ *         description: Number of items per page
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           example: 10
  *     responses:
  *       200:
  *         description: Partners retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalItems:
+ *                       type: integer
+ *                     itemsPerPage:
+ *                       type: integer
+ *                     hasNextPage:
+ *                       type: boolean
+ *                     hasPrevPage:
+ *                       type: boolean
  *   post:
  *     summary: Create new partner
  *     tags:
@@ -156,8 +205,10 @@ const getAllPartnersAdmin = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const { data, total } = await Partner.findAllPaginated(page, limit, null);
-    return require('../utils/response').paginatedResponse(res, data, page, limit, total, 'Partner retrieved');
+    const search = req.query.search || null;
+    
+    const { data, total } = await Partner.findAllPaginatedWithSearch(page, limit, null, search);
+    return require('../utils/response').paginatedResponse(res, data, page, limit, total, 'Partners retrieved');
   } catch (error) {
     next(error);
   }

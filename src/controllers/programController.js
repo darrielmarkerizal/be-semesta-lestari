@@ -82,14 +82,69 @@ const getProgramById = async (req, res, next) => {
  * @swagger
  * /api/admin/programs:
  *   get:
- *     summary: Get all programs (admin)
+ *     summary: Get all programs with pagination and search (admin)
  *     tags:
  *       - Admin - Programs
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search in name, description, and category name (optional)
+ *         schema:
+ *           type: string
+ *           example: education
+ *       - name: category_id
+ *         in: query
+ *         description: Filter by category ID (optional)
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - name: page
+ *         in: query
+ *         description: Page number for pagination
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           example: 1
+ *       - name: limit
+ *         in: query
+ *         description: Number of items per page
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           example: 10
  *     responses:
  *       200:
  *         description: Programs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalItems:
+ *                       type: integer
+ *                     itemsPerPage:
+ *                       type: integer
+ *                     hasNextPage:
+ *                       type: boolean
+ *                     hasPrevPage:
+ *                       type: boolean
  *   post:
  *     summary: Create new program
  *     tags:
@@ -111,6 +166,8 @@ const getProgramById = async (req, res, next) => {
  *                 type: string
  *               image_url:
  *                 type: string
+ *               category_id:
+ *                 type: integer
  *               is_highlighted:
  *                 type: boolean
  *                 description: Mark this program as highlighted on homepage
@@ -126,8 +183,11 @@ const getAllProgramsAdmin = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const { data, total } = await Program.findAllPaginated(page, limit, null);
-    return require('../utils/response').paginatedResponse(res, data, page, limit, total, 'Program retrieved');
+    const search = req.query.search || null;
+    const categoryId = req.query.category_id ? parseInt(req.query.category_id) : null;
+    
+    const { data, total } = await Program.findAllPaginatedWithSearch(page, limit, null, categoryId, search);
+    return require('../utils/response').paginatedResponse(res, data, page, limit, total, 'Programs retrieved');
   } catch (error) {
     next(error);
   }

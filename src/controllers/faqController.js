@@ -111,14 +111,75 @@ const getFAQById = async (req, res, next) => {
  * @swagger
  * /api/admin/faqs:
  *   get:
- *     summary: Get all FAQs (admin)
+ *     summary: Get all FAQs with pagination and search (admin)
  *     tags:
  *       - Admin - FAQs
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search in question, answer, and category (optional)
+ *         schema:
+ *           type: string
+ *           example: donation
+ *       - name: category
+ *         in: query
+ *         description: Filter by category (optional)
+ *         schema:
+ *           type: string
+ *           example: General
+ *       - name: page
+ *         in: query
+ *         description: Page number for pagination
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *           example: 1
+ *       - name: limit
+ *         in: query
+ *         description: Number of items per page
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           example: 10
+ *       - name: all
+ *         in: query
+ *         description: Return all items without pagination (set to "true")
+ *         schema:
+ *           type: string
+ *           example: "true"
  *     responses:
  *       200:
  *         description: FAQs retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     currentPage:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *                     totalItems:
+ *                       type: integer
+ *                     itemsPerPage:
+ *                       type: integer
+ *                     hasNextPage:
+ *                       type: boolean
+ *                     hasPrevPage:
+ *                       type: boolean
  *   post:
  *     summary: Create new FAQ
  *     tags:
@@ -154,19 +215,22 @@ const getAllFAQsAdmin = async (req, res, next) => {
     // If client requests all items, return full list (no pagination)
     if (req.query.all === "true") {
       const data = await FAQ.findAll(null);
-      return successResponse(res, data, "FAQ retrieved");
+      return successResponse(res, data, "FAQs retrieved");
     }
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const { data, total } = await FAQ.findAllPaginated(page, limit, null);
+    const search = req.query.search || null;
+    const category = req.query.category || null;
+    
+    const { data, total } = await FAQ.findAllPaginatedWithSearch(page, limit, null, category, search);
     return require("../utils/response").paginatedResponse(
       res,
       data,
       page,
       limit,
       total,
-      "FAQ retrieved",
+      "FAQs retrieved",
     );
   } catch (error) {
     next(error);
