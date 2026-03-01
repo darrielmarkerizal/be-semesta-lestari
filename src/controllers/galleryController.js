@@ -6,7 +6,7 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  * /api/gallery:
  *   get:
  *     summary: Get all gallery items (public)
- *     description: Get paginated gallery items with optional category filtering and search. Returns gallery section information and items with category details.
+ *     description: Get paginated gallery items with optional category filtering and search. Includes category details for each item.
  *     tags:
  *       - Gallery
  *     parameters:
@@ -38,7 +38,7 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  *           example: 12
  *     responses:
  *       200:
- *         description: Gallery items retrieved successfully with section information
+ *         description: Gallery items retrieved successfully with category information
  *         content:
  *           application/json:
  *             schema:
@@ -51,35 +51,29 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  *                   type: string
  *                   example: Gallery retrieved
  *                 data:
- *                   type: object
- *                   properties:
- *                     section:
- *                       type: object
- *                       description: Gallery section settings
- *                     items:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           id:
- *                             type: integer
- *                           title:
- *                             type: string
- *                           image_url:
- *                             type: string
- *                           category_id:
- *                             type: integer
- *                           category_name:
- *                             type: string
- *                           category_slug:
- *                             type: string
- *                           gallery_date:
- *                             type: string
- *                             format: date
- *                           order_position:
- *                             type: integer
- *                           is_active:
- *                             type: boolean
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       title:
+ *                         type: string
+ *                       image_url:
+ *                         type: string
+ *                       category_id:
+ *                         type: integer
+ *                       category_name:
+ *                         type: string
+ *                       category_slug:
+ *                         type: string
+ *                       gallery_date:
+ *                         type: string
+ *                         format: date
+ *                       order_position:
+ *                         type: integer
+ *                       is_active:
+ *                         type: boolean
  *                 pagination:
  *                   $ref: '#/components/schemas/Pagination'
  */
@@ -90,19 +84,10 @@ const getAllGallery = async (req, res, next) => {
     const categorySlug = req.query.category || null;
     const search = req.query.search || null;
     
-    // Get gallery section settings
-    const GallerySection = require('../models/GallerySection');
-    const section = await GallerySection.getFirst();
-    
     // Get gallery items with pagination, category filter, and search
     const { data, total } = await GalleryItem.findAllPaginated(page, limit, true, categorySlug, search);
     
-    const response = {
-      section: section || null,
-      items: data
-    };
-    
-    return paginatedResponse(res, response, page, limit, total, 'Gallery retrieved');
+    return paginatedResponse(res, data, page, limit, total, 'Gallery retrieved');
   } catch (error) {
     next(error);
   }
