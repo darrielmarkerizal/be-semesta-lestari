@@ -8,14 +8,20 @@ class Program extends BaseModel {
 
   async findAllPaginatedWithSearch(page = 1, limit = 10, isActive = null, categoryId = null, search = null) {
     const offset = (page - 1) * limit;
-    let query = `
-      SELECT 
-        p.*,
-        pc.name as category_name,
-        pc.slug as category_slug
-      FROM programs p
-      LEFT JOIN program_categories pc ON p.category_id = pc.id
-    `;
+    
+    // Check if category_id column exists
+    const [columns] = await pool.query('SHOW COLUMNS FROM programs LIKE "category_id"');
+    const hasCategoryId = columns.length > 0;
+    
+    let query = hasCategoryId 
+      ? `SELECT 
+          p.*,
+          pc.name as category_name,
+          pc.slug as category_slug
+        FROM programs p
+        LEFT JOIN program_categories pc ON p.category_id = pc.id`
+      : `SELECT * FROM programs p`;
+    
     const params = [];
     const conditions = [];
     
@@ -24,15 +30,21 @@ class Program extends BaseModel {
       params.push(isActive);
     }
     
-    if (categoryId) {
+    if (hasCategoryId && categoryId) {
       conditions.push('p.category_id = ?');
       params.push(categoryId);
     }
     
     if (search) {
-      conditions.push('(p.name LIKE ? OR p.description LIKE ? OR pc.name LIKE ?)');
-      const searchPattern = `%${search}%`;
-      params.push(searchPattern, searchPattern, searchPattern);
+      if (hasCategoryId) {
+        conditions.push('(p.name LIKE ? OR p.description LIKE ? OR pc.name LIKE ?)');
+        const searchPattern = `%${search}%`;
+        params.push(searchPattern, searchPattern, searchPattern);
+      } else {
+        conditions.push('(p.name LIKE ? OR p.description LIKE ?)');
+        const searchPattern = `%${search}%`;
+        params.push(searchPattern, searchPattern);
+      }
     }
     
     if (conditions.length > 0) {
@@ -45,28 +57,32 @@ class Program extends BaseModel {
     const [rows] = await pool.query(query, params);
     
     // Count query
-    let countQuery = 'SELECT COUNT(*) as total FROM programs p';
+    let countQuery = hasCategoryId
+      ? 'SELECT COUNT(*) as total FROM programs p LEFT JOIN program_categories pc ON p.category_id = pc.id'
+      : 'SELECT COUNT(*) as total FROM programs p';
     const countParams = [];
-    
-    if (categoryId || search) {
-      countQuery += ' LEFT JOIN program_categories pc ON p.category_id = pc.id';
-    }
-    
     const countConditions = [];
+    
     if (isActive !== null) {
       countConditions.push('p.is_active = ?');
       countParams.push(isActive);
     }
     
-    if (categoryId) {
+    if (hasCategoryId && categoryId) {
       countConditions.push('p.category_id = ?');
       countParams.push(categoryId);
     }
     
     if (search) {
-      countConditions.push('(p.name LIKE ? OR p.description LIKE ? OR pc.name LIKE ?)');
-      const searchPattern = `%${search}%`;
-      countParams.push(searchPattern, searchPattern, searchPattern);
+      if (hasCategoryId) {
+        countConditions.push('(p.name LIKE ? OR p.description LIKE ? OR pc.name LIKE ?)');
+        const searchPattern = `%${search}%`;
+        countParams.push(searchPattern, searchPattern, searchPattern);
+      } else {
+        countConditions.push('(p.name LIKE ? OR p.description LIKE ?)');
+        const searchPattern = `%${search}%`;
+        countParams.push(searchPattern, searchPattern);
+      }
     }
     
     if (countConditions.length > 0) {
