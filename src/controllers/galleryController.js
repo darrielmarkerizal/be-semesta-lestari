@@ -6,37 +6,103 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  * /api/gallery:
  *   get:
  *     summary: Get all gallery items (public)
- *     description: Get paginated gallery items with optional category filtering
+ *     description: Get paginated gallery items with optional category filtering and search. Returns gallery section information and items with category details.
  *     tags:
  *       - Gallery
  *     parameters:
  *       - name: category
  *         in: query
- *         description: Filter by category slug (optional)
+ *         description: Filter by category ID or slug (optional)
  *         schema:
  *           type: string
+ *           example: events
+ *       - name: search
+ *         in: query
+ *         description: Search in title and category name (optional)
+ *         schema:
+ *           type: string
+ *           example: tree planting
  *       - name: page
  *         in: query
+ *         description: Page number for pagination
  *         schema:
  *           type: integer
  *           default: 1
+ *           example: 1
  *       - name: limit
  *         in: query
+ *         description: Number of items per page
  *         schema:
  *           type: integer
  *           default: 10
+ *           example: 12
  *     responses:
  *       200:
- *         description: Gallery items retrieved successfully
+ *         description: Gallery items retrieved successfully with section information
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Gallery retrieved
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     section:
+ *                       type: object
+ *                       description: Gallery section settings
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           title:
+ *                             type: string
+ *                           image_url:
+ *                             type: string
+ *                           category_id:
+ *                             type: integer
+ *                           category_name:
+ *                             type: string
+ *                           category_slug:
+ *                             type: string
+ *                           gallery_date:
+ *                             type: string
+ *                             format: date
+ *                           order_position:
+ *                             type: integer
+ *                           is_active:
+ *                             type: boolean
+ *                 pagination:
+ *                   $ref: '#/components/schemas/Pagination'
  */
 const getAllGallery = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const categorySlug = req.query.category || null;
+    const search = req.query.search || null;
     
-    const { data, total } = await GalleryItem.findAllPaginated(page, limit, true, categorySlug);
-    return paginatedResponse(res, data, page, limit, total, 'Gallery items retrieved');
+    // Get gallery section settings
+    const GallerySection = require('../models/GallerySection');
+    const section = await GallerySection.getFirst();
+    
+    // Get gallery items with pagination, category filter, and search
+    const { data, total } = await GalleryItem.findAllPaginated(page, limit, true, categorySlug, search);
+    
+    const response = {
+      section: section || null,
+      items: data
+    };
+    
+    return paginatedResponse(res, response, page, limit, total, 'Gallery retrieved');
   } catch (error) {
     next(error);
   }

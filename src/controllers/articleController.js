@@ -6,16 +6,16 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  * /api/articles:
  *   get:
  *     summary: Get all articles (public)
- *     description: Get paginated articles with optional category filtering and search. All articles include category information (category_id, category_name, category_slug).
+ *     description: Get paginated articles with optional category filtering and search. Supports filtering by category ID or slug. All articles include category information (category_id, category_name, category_slug).
  *     tags:
  *       - Articles
  *     parameters:
  *       - name: category
  *         in: query
- *         description: Filter by category slug (optional). If not provided, returns all articles.
+ *         description: Filter by category ID or slug (optional). Accepts both numeric ID (e.g., 1) or slug (e.g., environmental-conservation).
  *         schema:
  *           type: string
- *           example: environmental-conservation
+ *           example: 1
  *       - name: search
  *         in: query
  *         description: Search in title, subtitle, content, and excerpt (optional)
@@ -35,7 +35,7 @@ const { successResponse, errorResponse, paginatedResponse } = require('../utils/
  *         schema:
  *           type: integer
  *           default: 10
- *           example: 10
+ *           example: 9
  *     responses:
  *       200:
  *         description: Articles retrieved successfully with category information
@@ -61,10 +61,10 @@ const getAllArticles = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const categorySlug = req.query.category || null;
+    const category = req.query.category || null;
     const search = req.query.search || null;
     
-    const { articles, total } = await Article.findAll(page, limit, true, categorySlug, search);
+    const { articles, total } = await Article.findAll(page, limit, true, category, search);
     
     return paginatedResponse(res, articles, page, limit, total, 'Articles retrieved');
   } catch (error) {
@@ -176,7 +176,7 @@ const incrementViews = async (req, res, next) => {
  * /api/admin/articles:
  *   get:
  *     summary: Get all articles (admin)
- *     description: Get all articles including inactive ones with category information and search (admin only)
+ *     description: Get all articles including inactive ones with category information and search. Supports filtering by category ID or slug (admin only).
  *     tags:
  *       - Admin - Articles
  *     security:
@@ -190,10 +190,10 @@ const incrementViews = async (req, res, next) => {
  *           example: forest conservation
  *       - name: category
  *         in: query
- *         description: Filter by category slug (optional)
+ *         description: Filter by category ID or slug (optional). Accepts both numeric ID (e.g., 1) or slug (e.g., environmental-conservation).
  *         schema:
  *           type: string
- *           example: environmental-conservation
+ *           example: 1
  *       - name: page
  *         in: query
  *         description: Page number for pagination
@@ -299,10 +299,10 @@ const getAllArticlesAdmin = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const categorySlug = req.query.category || null;
+    const category = req.query.category || null;
     const search = req.query.search || null;
     
-    const { articles, total } = await Article.findAll(page, limit, null, categorySlug, search);
+    const { articles, total } = await Article.findAll(page, limit, null, category, search);
     
     return paginatedResponse(res, articles, page, limit, total, 'Articles retrieved');
   } catch (error) {

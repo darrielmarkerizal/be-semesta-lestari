@@ -2,7 +2,7 @@ const { pool } = require('../config/database');
 const slugify = require('slugify');
 
 class Article {
-  static async findAll(page = 1, limit = 10, isActive = true, categorySlug = null, search = null) {
+  static async findAll(page = 1, limit = 10, isActive = true, category = null, search = null) {
     const offset = (page - 1) * limit;
     let query = `
       SELECT 
@@ -20,9 +20,16 @@ class Article {
       params.push(isActive);
     }
     
-    if (categorySlug) {
-      conditions.push('c.slug = ?');
-      params.push(categorySlug);
+    // Support both category ID and slug
+    if (category) {
+      // Check if category is a number (ID) or string (slug)
+      if (!isNaN(category)) {
+        conditions.push('a.category_id = ?');
+        params.push(parseInt(category));
+      } else {
+        conditions.push('c.slug = ?');
+        params.push(category);
+      }
     }
     
     if (search) {
@@ -44,7 +51,7 @@ class Article {
     let countQuery = 'SELECT COUNT(*) as total FROM articles a';
     const countParams = [];
     
-    if (categorySlug) {
+    if (category) {
       countQuery += ' LEFT JOIN categories c ON a.category_id = c.id';
     }
     
@@ -54,9 +61,15 @@ class Article {
       countParams.push(isActive);
     }
     
-    if (categorySlug) {
-      countConditions.push('c.slug = ?');
-      countParams.push(categorySlug);
+    // Support both category ID and slug in count query
+    if (category) {
+      if (!isNaN(category)) {
+        countConditions.push('a.category_id = ?');
+        countParams.push(parseInt(category));
+      } else {
+        countConditions.push('c.slug = ?');
+        countParams.push(category);
+      }
     }
     
     if (search) {
