@@ -81,11 +81,11 @@ const getAllGallery = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const categorySlug = req.query.category || null;
+    const category = req.query.category || null;
     const search = req.query.search || null;
     
     // Get gallery items with pagination, category filter, and search
-    const { data, total } = await GalleryItem.findAllPaginated(page, limit, true, categorySlug, search);
+    const { data, total } = await GalleryItem.findAllPaginated(page, limit, true, category, search);
     
     return paginatedResponse(res, data, page, limit, total, 'Gallery retrieved');
   } catch (error) {
@@ -202,10 +202,10 @@ const getAllGalleryAdmin = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const categorySlug = req.query.category || null;
+    const category = req.query.category || null;
     const search = req.query.search || null;
     
-    const { data, total } = await GalleryItem.findAllPaginated(page, limit, null, categorySlug, search);
+    const { data, total } = await GalleryItem.findAllPaginated(page, limit, null, category, search);
     return paginatedResponse(res, data, page, limit, total, 'Gallery items retrieved');
   } catch (error) {
     next(error);

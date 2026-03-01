@@ -6,7 +6,7 @@ class GalleryItem extends BaseModel {
     super('gallery_items');
   }
   
-  async findAllPaginated(page = 1, limit = 10, isActive = null, categorySlug = null, search = null) {
+  async findAllPaginated(page = 1, limit = 10, isActive = null, category = null, search = null) {
     const offset = (page - 1) * limit;
     let query = `
       SELECT 
@@ -24,9 +24,17 @@ class GalleryItem extends BaseModel {
       params.push(isActive);
     }
     
-    if (categorySlug) {
-      conditions.push('gc.slug = ?');
-      params.push(categorySlug);
+    // Support both category ID and slug
+    if (category) {
+      if (!isNaN(category)) {
+        // Numeric value - filter by category ID
+        conditions.push('g.category_id = ?');
+        params.push(parseInt(category));
+      } else {
+        // String value - filter by category slug
+        conditions.push('gc.slug = ?');
+        params.push(category);
+      }
     }
     
     if (search) {
@@ -48,7 +56,7 @@ class GalleryItem extends BaseModel {
     let countQuery = 'SELECT COUNT(*) as total FROM gallery_items g';
     const countParams = [];
     
-    if (categorySlug || search) {
+    if (category || search) {
       countQuery += ' LEFT JOIN gallery_categories gc ON g.category_id = gc.id';
     }
     
@@ -58,9 +66,15 @@ class GalleryItem extends BaseModel {
       countParams.push(isActive);
     }
     
-    if (categorySlug) {
-      countConditions.push('gc.slug = ?');
-      countParams.push(categorySlug);
+    // Support both category ID and slug in count
+    if (category) {
+      if (!isNaN(category)) {
+        countConditions.push('g.category_id = ?');
+        countParams.push(parseInt(category));
+      } else {
+        countConditions.push('gc.slug = ?');
+        countParams.push(category);
+      }
     }
     
     if (search) {
