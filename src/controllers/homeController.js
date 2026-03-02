@@ -234,7 +234,7 @@ const getHomePage = async (req, res, next) => {
       HeroSection.getFirst(),
       Vision.getFirst(),
       Mission.findAll(true),
-      HomeImpactSection.findAll(true, 'created_at DESC').then(rows => rows[0]),
+      HomeImpactSection.getFirst(),
       ImpactSection.findAll(true),
       HomeProgramsSection.getFirst(),
       Program.findAll(true),
@@ -414,12 +414,12 @@ const getMissions = async (req, res, next) => {
 const getImpact = async (req, res, next) => {
   try {
     const [impactSettings, impactItems] = await Promise.all([
-      HomeImpactSection.findAll(true, 'created_at DESC'),
+      HomeImpactSection.getFirst(),
       ImpactSection.findAll(true)
     ]);
     
     const response = {
-      section: impactSettings[0] || null,
+      section: impactSettings || null,
       items: impactItems
     };
     
