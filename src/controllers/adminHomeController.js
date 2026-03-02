@@ -412,6 +412,16 @@ const impactController = createGenericController(
   "Impact Section",
 );
 
+// Override getAllAdmin to return all items without pagination (to match public endpoint)
+impactController.getAllAdmin = async (req, res, next) => {
+  try {
+    const items = await ImpactSection.findAll(null); // null = include both active and inactive
+    return require('../utils/response').successResponse(res, items, 'Impact Section retrieved');
+  } catch (error) {
+    next(error);
+  }
+};
+
 /**
  * @swagger
  * /api/admin/homepage/impact-section:
