@@ -94,6 +94,19 @@ class Program extends BaseModel {
     
     return { data: rows, total };
   }
+
+  async update(id, data) {
+    // If setting is_highlighted to true, first unhighlight all other programs
+    if (data.is_highlighted === true || data.is_highlighted === 1) {
+      await pool.query(
+        'UPDATE programs SET is_highlighted = FALSE WHERE id != ?',
+        [id]
+      );
+    }
+    
+    // Call parent update method
+    return super.update(id, data);
+  }
 }
 
 module.exports = new Program();

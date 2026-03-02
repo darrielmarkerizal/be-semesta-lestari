@@ -57,6 +57,19 @@ class Leadership extends BaseModel {
     
     return { data: rows, total };
   }
+
+  async update(id, data) {
+    // If setting is_highlighted to true, first unhighlight all other leadership members
+    if (data.is_highlighted === true || data.is_highlighted === 1) {
+      await pool.query(
+        'UPDATE leadership SET is_highlighted = FALSE WHERE id != ?',
+        [id]
+      );
+    }
+    
+    // Call parent update method
+    return super.update(id, data);
+  }
 }
 
 module.exports = new Leadership();
