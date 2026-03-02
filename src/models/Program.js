@@ -95,6 +95,16 @@ class Program extends BaseModel {
     return { data: rows, total };
   }
 
+  async create(data) {
+    // If creating with is_highlighted true, first unhighlight all other programs
+    if (data.is_highlighted === true || data.is_highlighted === 1) {
+      await pool.query('UPDATE programs SET is_highlighted = FALSE');
+    }
+    
+    // Call parent create method
+    return super.create(data);
+  }
+
   async update(id, data) {
     // If setting is_highlighted to true, first unhighlight all other programs
     if (data.is_highlighted === true || data.is_highlighted === 1) {
@@ -106,6 +116,31 @@ class Program extends BaseModel {
     
     // Call parent update method
     return super.update(id, data);
+  }
+
+  async delete(id) {
+    // Check if the program being deleted is highlighted
+    const program = await this.findById(id);
+    const wasHighlighted = program && (program.is_highlighted === 1 || program.is_highlighted === true);
+    
+    // Delete the program
+    const deleted = await super.delete(id);
+    
+    // If deleted program was highlighted, assign highlight to a random program
+    if (deleted && wasHighlighted) {
+      const [programs] = await pool.query(
+        'SELECT id FROM programs WHERE is_active = TRUE ORDER BY RAND() LIMIT 1'
+      );
+      
+      if (programs.length > 0) {
+        await pool.query(
+          'UPDATE programs SET is_highlighted = TRUE WHERE id = ?',
+          [programs[0].id]
+        );
+      }
+    }
+    
+    return deleted;
   }
 }
 

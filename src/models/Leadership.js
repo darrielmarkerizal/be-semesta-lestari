@@ -58,6 +58,16 @@ class Leadership extends BaseModel {
     return { data: rows, total };
   }
 
+  async create(data) {
+    // If creating with is_highlighted true, first unhighlight all other leadership members
+    if (data.is_highlighted === true || data.is_highlighted === 1) {
+      await pool.query('UPDATE leadership SET is_highlighted = FALSE');
+    }
+    
+    // Call parent create method
+    return super.create(data);
+  }
+
   async update(id, data) {
     // If setting is_highlighted to true, first unhighlight all other leadership members
     if (data.is_highlighted === true || data.is_highlighted === 1) {
@@ -69,6 +79,31 @@ class Leadership extends BaseModel {
     
     // Call parent update method
     return super.update(id, data);
+  }
+
+  async delete(id) {
+    // Check if the leadership member being deleted is highlighted
+    const member = await this.findById(id);
+    const wasHighlighted = member && (member.is_highlighted === 1 || member.is_highlighted === true);
+    
+    // Delete the leadership member
+    const deleted = await super.delete(id);
+    
+    // If deleted member was highlighted, assign highlight to a random member
+    if (deleted && wasHighlighted) {
+      const [members] = await pool.query(
+        'SELECT id FROM leadership WHERE is_active = TRUE ORDER BY RAND() LIMIT 1'
+      );
+      
+      if (members.length > 0) {
+        await pool.query(
+          'UPDATE leadership SET is_highlighted = TRUE WHERE id = ?',
+          [members[0].id]
+        );
+      }
+    }
+    
+    return deleted;
   }
 }
 
