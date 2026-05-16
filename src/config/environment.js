@@ -20,7 +20,8 @@ console.log({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT
+  port: process.env.DB_PORT,
+  db: process.env.DB_PASSWORD
 });
 
 const PORT = process.env.PORT || 3000;
