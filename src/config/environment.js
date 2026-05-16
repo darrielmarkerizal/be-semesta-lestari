@@ -1,38 +1,25 @@
-console.log('STEP 1');
-
 require('dotenv').config();
 
-console.log('STEP 2');
+console.log('STEP 1');
 
 const express = require('express');
-
-console.log('STEP 3');
-
 const mysql = require('mysql2/promise');
-
-console.log('STEP 4');
 
 const app = express();
 
-console.log('STEP 5');
-
-console.log({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT,
-  db: process.env.DB_PASSWORD
-});
-
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.get('/', (req, res) => {
   res.send('Hello World');
 });
 
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 
+  connectDB();
+});
+
+async function connectDB() {
   try {
     console.log('Connecting to database...');
 
@@ -52,4 +39,4 @@ app.listen(PORT, async () => {
     console.error('❌ DATABASE ERROR');
     console.error(error);
   }
-});
+}
