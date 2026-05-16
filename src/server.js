@@ -5,7 +5,6 @@ const config = require("./config/environment");
 const { testConnection } = require("./config/database");
 const logger = require("./utils/logger");
 const initializeDatabase = require("./scripts/initDatabase");
-const { seedData } = require("./scripts/seedDatabase");
 
 const PORT = config.port || process.env.PORT || 3000;
 
@@ -37,17 +36,6 @@ async function initializeApp() {
     logger.info("🔄 Initializing database...");
 
     await initializeDatabase();
-    // Conditionally run seeders when explicitly enabled via env
-    if (process.env.RUN_SEEDERS === "true") {
-      try {
-        logger.info("🔁 RUN_SEEDERS=true — running seeders...");
-        await seedData();
-        logger.info("✅ Seeders finished");
-      } catch (err) {
-        logger.error("Seeder error:", err);
-      }
-    }
-
     logger.info("✅ Database initialized");
   } catch (error) {
     logger.error("❌ Initialization error:", error);
