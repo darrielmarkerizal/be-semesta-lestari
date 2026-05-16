@@ -54,12 +54,32 @@ const {
 router.post("/auth/login", validate(userSchemas.login), authController.login);
 
 // Temporary public endpoint to run database seeders when data is still empty
+let seedInProgress = false;
 router.post("/seed", async (req, res, next) => {
   try {
-    await seedData();
-    res.json({
+    if (seedInProgress) {
+      return res.status(409).json({
+        success: false,
+        message: "Seeder is already running",
+      });
+    }
+
+    seedInProgress = true;
+
+    setImmediate(() => {
+      seedData()
+        .then(() => {
+          seedInProgress = false;
+        })
+        .catch((error) => {
+          seedInProgress = false;
+          console.error("Seeder failed:", error);
+        });
+    });
+
+    return res.status(202).json({
       success: true,
-      message: "Seeder executed successfully",
+      message: "Seeder started",
     });
   } catch (error) {
     next(error);
