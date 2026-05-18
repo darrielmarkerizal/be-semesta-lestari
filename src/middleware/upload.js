@@ -3,7 +3,8 @@ const path = require('path');
 const fs = require('fs');
 
 // Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, '../../uploads');
+// Path sekarang mengarah ke LUAR direktori project: ../uploads
+const uploadsDir = path.join(__dirname, '../../../uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -118,7 +119,8 @@ const getFilePathFromUrl = (url) => {
   
   // Extract path from URL (e.g., /uploads/articles/image.jpg)
   const urlPath = url.replace(/^https?:\/\/[^\/]+/, '');
-  return path.join(__dirname, '../..', urlPath);
+  // Path sekarang mengarah ke LUAR direktori project
+  return path.join(__dirname, '../../..', urlPath);
 };
 
 module.exports = {

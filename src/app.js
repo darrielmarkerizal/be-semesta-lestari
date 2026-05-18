@@ -43,7 +43,8 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 // Serve static files from uploads directory (no caching)
 app.use(
   "/uploads",
-  express.static(path.join(__dirname, "../uploads"), {
+  // Path sekarang mengarah ke LUAR direktori project
+  express.static(path.join(__dirname, "../../uploads"), {
     etag: false,
     lastModified: false,
     setHeaders: (res, path) => {
