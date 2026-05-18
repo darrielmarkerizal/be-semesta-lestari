@@ -42,12 +42,12 @@ const storage = multer.diskStorage({
       // Get entity type from route or body
       const entityType = req.params.entity || req.body.entity || 'general';
       const uploadPath = path.join(uploadsDir, entityType);
-      
+
       // Create directory if it doesn't exist
       if (!fs.existsSync(uploadPath)) {
         fs.mkdirSync(uploadPath, { recursive: true });
       }
-      
+
       cb(null, uploadPath);
     } catch (error) {
       console.error("Multer Destination Error:", error);
@@ -72,7 +72,7 @@ const storage = multer.diskStorage({
 // File filter - only allow images
 const fileFilter = (req, file, cb) => {
   const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-  
+
   if (allowedMimes.includes(file.mimetype)) {
     cb(null, true);
   } else {
@@ -116,7 +116,7 @@ const deleteFile = (filePath) => {
 // Helper function to get file path from URL
 const getFilePathFromUrl = (url) => {
   if (!url) return null;
-  
+
   // Extract path from URL (e.g., /uploads/articles/image.jpg)
   const urlPath = url.replace(/^https?:\/\/[^\/]+/, '');
   // Path sekarang mengarah ke LUAR direktori project
@@ -129,3 +129,5 @@ module.exports = {
   deleteFile,
   getFilePathFromUrl
 };
+
+//test
